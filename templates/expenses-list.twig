@@ -1,0 +1,44 @@
+<div class="card-body">
+    <section class="container row">
+        <article class="col-md-9" style="width: auto; margin: auto auto;">
+            <table class="table table-bordered table-hover table-condensed">
+                <thead class="thead-dark text-center bg-secondary">
+                    <tr class="bg-success">
+                        <th> # </th>
+                        <th> Descripcion </th>
+                        <th> Monto </th>
+                        <th> Acciones </th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    {% if expenses is empty %}
+                    <tr>
+                        <td colspan="9"> sin registros </td>
+                    </tr>
+                    {% endif %}
+                    {% for expenditure in expenses %}
+                    <tr>
+                        <td> nro </td>
+                        <td> {{ expenditure.description }} </td>
+                        <td> {{ expenditure.amount|number_format }} </td>
+                        <td> <a href="#" onclick="updateExpenditure({{ expenditure.idSession }}, {{ expenditure.id }});"> <i class="fas fa-pencil-alt"> </i> </a> 
+                             <a href="#" onclick="deleteExpenditure({{ expenditure.idSession }}, {{ expenditure.id }});"><i class="fas fa-trash-alt"></i> </a>
+                             </td>
+                    </tr>
+                    {% endfor %}
+                    <tr class="text-center bg-dark text-white">
+                        <th> TOTAL </th>
+                        <th>  </th>
+                        <th> {{ expensesTotal|number_format }} </th>
+                        <th> </th>
+                    </tr>
+                    <tr>
+                        <td colspan="8">
+                            <a href="#" onclick="addExpenditure({{ idSession }})"" class="btn btn-lg btn-block btn-danger"> <i class="fas fa-plus"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </article>
+    </section>
+</div>
