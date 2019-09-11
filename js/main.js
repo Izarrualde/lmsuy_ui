@@ -14,6 +14,19 @@ function hideLoader() {
   $('#loader').removeClass('loading');
 }
 
+function getCurrentDate() {
+  var currentDate = new Date();
+  debug(currentDate.getDate());
+  var date = currentDate.getFullYear() +"-"+(((currentDate.getMonth()+1) < 10)?"0":"") + (currentDate.getMonth()+1) +"-"+ ((currentDate.getDate() < 10)?"0":"") + currentDate.getDate();
+  var hour = ((currentDate.getHours() < 10) ? "0":"") + currentDate.getHours() + ":" + ((currentDate.getMinutes() < 10) ?"0":"") + currentDate.getMinutes();
+
+  return {
+    "date" : date,
+    "hour" : hour
+  };
+}
+
+
 function makeAPIRequest(url, method, successCallback, errorCallback, body) {
   showLoader();
   var req = {
@@ -464,6 +477,7 @@ function addComission(idSession)
       // The default is to load asynchronously, and call the load function 
       //   when the template is loaded.
       load: function(tpl) {
+        var now = getCurrentDate();
         var output = tpl.render({
           idSession : idSession,
           session : null,
@@ -473,6 +487,7 @@ function addComission(idSession)
         });
         $('#forms').html(output);
         $('#idSession').val(idSession);
+        $('#hour').val(now["date"] + "T" + now["hour"]); 
       }
   });
 }
@@ -548,6 +563,7 @@ function addBuyin(idSession)
       // The default is to load asynchronously, and call the load function 
       //   when the template is loaded.
       load: function(tpl) {
+        var now = getCurrentDate();
         var output = tpl.render({
           idSession : idSession,
           session : null,
@@ -557,6 +573,7 @@ function addBuyin(idSession)
         });
         $('#forms').html(output);
         $('#idSession').val(idSession);
+        $('#hour').val(now["date"] + "T" + now["hour"]);
         var loadUsers = function() {
           makeAPIRequest(
           'http://www.lmsuy.local/sessions/' + idSession + '/usersSession',
@@ -736,6 +753,7 @@ function addTips(idSession)
       // The default is to load asynchronously, and call the load function 
       //   when the template is loaded.
       load: function(tpl) {
+        var now = getCurrentDate();
         var output = tpl.render({
           idSession : idSession,
           session : null,
@@ -745,6 +763,7 @@ function addTips(idSession)
         });
         $('#forms').html(output);
         $('#idSession').val(idSession);
+        $('#hour').val(now["date"] + "T" + now["hour"]);
       }
   });
 }
@@ -1039,7 +1058,12 @@ function updateSession(idSession)
         $('#forms').html(output);
         $('#id').val(data.id);
         $('#idSession').val(data.idSession);
-        $('#comission').val(data.comission);
+        $('#description').val(data.description);
+        $('#rakebackClass').val(data.rakebackClass);
+        $('#date').val(data.created_at.date.substr(0,10));
+        $('#start_at').val(data.startTime.date.substr(0,10) + 'T' + data.startTime.date.substr(11,5));
+        $('#real_start_at').val(data.startTimeReal.date.substr(0,10) + 'T' + data.startTimeReal.date.substr(11,5));
+        $('#end_at').val(data.endTime.date.substr(0,10) + 'T' + data.endTime.date.substr(11,5));
       },
       function(err) {
         debug('Fetch Error :-S', err);
@@ -1087,12 +1111,15 @@ function addSession()
       // The default is to load asynchronously, and call the load function 
       //   when the template is loaded.
       load: function(tpl) {
+        var now = getCurrentDate();
         var output = tpl.render({
           title: 'Agregar Sesión',
           action : 'http://www.lmsuy.local/sessions',
           buttonName : 'Agregar'
         });
         $('#forms').html(output);
+        $('#date').val(now["date"]);
+        $('#start_at').val(now["date"] + "T" + now["hour"]);
       }
   });
 }
