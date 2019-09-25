@@ -25,24 +25,25 @@
                             <td>{{ session.created_at.date|date('l') }}</td>
                             <td>{{ session.description|default("-") }}</td>
                             <td>{{ session.startTime ? session.startTime.date|date('H:i') : "-" }}</td>
-                            <td>{{ session.ActivePlayers|length }}/{{ session.distinctPlayers|length }}</td>
+                            <td>{{ session.countActivePlayers }}/{{ session.distinctPlayers|length }}</td>
                             <td>{{ session.seats }}</td>
                             <td>{{ session.endTime ? session.endTime.date|date('H:i') : "-" }}</td>
                             <td>
                                 <a href="#" onclick="fetchUsersSession({{ session.id }});" class="btn btn-sm btn-info"> <i class="fas fa-users"></i></a>
                                 <a href="#" onclick="fetchBuyins({{ session.id }});" class="btn btn-sm btn-secondary"> <i class="fas fa-money-bill"></i></a>
                                 <a href="#" onclick="fetchTips({{ session.id }});" class="btn btn-sm btn-danger"> <i class="fas fa-hand-holding-usd"></i></a>
-                                <a href="#" onclick="fetchComissions({{ session.id }});" class="btn btn-sm btn-success"> <i class="fas fa-dollar-sign"></i></a>
+
+                                <a href="#" onclick="fetchComissions({{ session.id }}, {{ session.comissionTotal }});" class="btn btn-sm btn-success"> <i class="fas fa-dollar-sign"></i></a>
+
+                                <a href="#" onclick="fetchExpenses({{ session.id }});" class="btn btn-sm btn-white"> <i class="fas fa-clipboard"></i></a>
                                 
                                 <a href="#" onclick="updateSession({{ session.id }});"> <i class="fas fa-pencil-alt"> </i> </a>
                                 
                                 <a href="#" onclick="deleteSession({{ session.id }});"> <i class="fas fa-trash-alt"></i> </a>
                                 
-                                <a href="actions/revisionsession_twig.php?id={{ session.id }}"> <i class="far fa-eye"></i></a>
+                                <a href="#" class="btn white" onclick="revisionSession({{ session.id }});" > <i class="far fa-eye"></i></a>
 
-                                <a href="#" onclick="fetchExpenses({{ session.id }});"> <i class="fas fa-clipboard"></i></a>
-
-                                <a href="/sessions/{{ session.id }}/calculate"><i class="fab fa-product-hunt"></i></a>
+                                <a href="#" onclick="calculatePoints({{ session.id }});"><i class="fab fa-product-hunt"></i></a>
                             </td>
                         </tr>
                         {% endfor %}

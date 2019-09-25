@@ -15,16 +15,18 @@
                                          <td colspan="9"> sin registros </td>
                                     </tr>
                                     {% endif %}
+                                    {% set totalDealerTip = 0 %}
                                     {% for dealerTip in dealerTips %}
                                     <tr class="text-center">
                                         <td> {{ dealerTip.hour.date|date('H:i') }} </td>
-                                        <td> {{ dealerTip.dealerTip|number_format }} </td>
+                                        <td> {{ dealerTip.dealerTip|number_format(2, ',', '.') }} </td>
                                         <td> <a href="#" onclick="updateDealerTip({{ dealerTip.idSession }}, {{ dealerTip.id }});"> <i class="fas fa-pencil-alt"> </i> </a> <a href="#" onclick="deleteDealerTip({{ dealerTip.idSession }}, {{ dealerTip.id }});"> <i class="fas fa-trash-alt"></i> </a></td>
                                     </tr>
+                                    {% set totalDealerTip = totalDealerTip + dealerTip.dealerTip %}
                                     {% endfor %}
                                     <tr class="text-center bg-dark text-white">
                                         <th> TOTAL </th>
-                                        <th> {{ dealerTipTotal|number_format }} </th>
+                                        <th> {{ totalDealerTip|number_format(2, ',', '.') }} </th>
                                         <th> </th>
                                     </tr>
                                 </tbody>
@@ -45,16 +47,18 @@
                                         <td colspan="9"> sin registros </td>
                                     </tr>
                                     {% endif %}
+                                    {% set totalServiceTip = 0 %}
                                     {% for serviceTip in serviceTips %}
                                     <tr>
                                         <td> {{ serviceTip.hour.date|date('H:i') }} </td>
-                                        <td> {{ serviceTip.serviceTip|number_format }} </td>
+                                        <td> {{ serviceTip.serviceTip|number_format(2, ',', '.') }} </td>
                                         <td> <a href="#" onclick="updateServiceTip({{ serviceTip.idSession }}, {{ serviceTip.id }});"> <i class="fas fa-pencil-alt"> </i> </a> <a href="#" onclick="deleteServiceTip({{ serviceTip.idSession }}, {{ serviceTip.id }});"> <i class="fas fa-trash-alt"></i> </a></td>
                                     </tr>
+                                    {% set totalServiceTip = totalServiceTip + serviceTip.serviceTip %}
                                     {% endfor %}
                                     <tr class="text-center bg-dark text-white">
                                         <th> TOTAL </th>
-                                        <th> {{ serviceTipTotal|number_format }} </th>
+                                        <th> {{ totalServiceTip|number_format(2, ',', '.') }} </th>
                                         <th> </th>
                                     </tr>
                                 </tbody>

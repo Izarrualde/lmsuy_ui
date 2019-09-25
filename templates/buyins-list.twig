@@ -20,8 +20,8 @@
                     {% for buyin in buyins %}
                     <tr>
                         <td> {{ buyin.user_session.user.name }} {{ buyin.user_session.user.lastname }} </td>
-                        <td> {{ buyin.amountCash|number_format }} </td>
-                        <td> {{ buyin.amountCredit|number_format }} </td>
+                        <td> {{ buyin.amountCash|number_format(0, ',', '.') }} </td>
+                        <td> {{ buyin.amountCredit|number_format(0, ',', '.') }} </td>
                         <td> {{ buyin.hour.date|date('H:i') }} </td>
                         <td> <a href="#" onclick="updateBuyin({{ buyin.idSession }}, {{ buyin.id }});"> <i class="fas fa-pencil-alt"> </i> </a>
                              <a href="#" onclick="deleteBuyin({{ buyin.idSession }}, {{ buyin.id }});"> <i class="fas fa-trash-alt"></i> </a> 

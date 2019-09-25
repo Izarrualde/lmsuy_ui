@@ -15,18 +15,21 @@
                         <td colspan="9"> sin registros </td>
                     </tr>
                     {% endif %}
+                    {% set totalComission = 0 %}
+
                     {% for comission in comissions %}
                     <tr>
                         <td> {{ comission.hour.date|date('H:i') }} </td>
-                        <td> {{ comission.comission|number_format }} </td>
+                        <td> {{ comission.comission|number_format(2, ',', '.') }} </td>
                         <td> <a href="#" onclick="updateComission({{ comission.idSession }}, {{ comission.id }});"> <i class="fas fa-pencil-alt"> </i> </a> 
                              <a href="#" onclick="deleteComission({{ comission.idSession }}, {{ comission.id }});"> <i class="fas fa-trash-alt"></i> </a>
                              </td>
                     </tr>
+                    {% set totalComission = totalComission + comission.comission %}
                     {% endfor %}
                     <tr class="text-center bg-dark text-white">
                         <th> TOTAL </th>
-                        <th> {{ session.comissionTotal|number_format }} </th>
+                        <th> {{ totalComission|number_format(2, ',', '.') }} </th>
                         <th> </th>
                     </tr>
                     <tr>

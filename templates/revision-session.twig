@@ -1,0 +1,22 @@
+<div class="container">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                Revision de la sesión
+            </div>
+            <div class="card-body">
+                <section class="container row">
+                    <article class="col-md-4">
+                        <p> Validación de sesión: {{ session.valid }} <br>
+
+                            {% if session.valid == false %}
+                            Por una diferencia de: {{ session.totalPlayed - session.totalCashout - session.comissionTotal - session.dealerTipTotal - session.serviceTipTotal }}
+                            {% endif %}  <br>
+                        </p>
+                        <p> Total Jugado: USD {{ session.totalPlayed }} </p>
+                    </article>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>

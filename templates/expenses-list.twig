@@ -16,20 +16,24 @@
                         <td colspan="9"> sin registros </td>
                     </tr>
                     {% endif %}
+                    {% set totalExpenses = 0 %}
+                    {% set counter = (counter|default(0)) %}
                     {% for expenditure in expenses %}
+                    {% set counter = (counter|default(counter)) + 1 %}
                     <tr>
-                        <td> nro </td>
+                        <td> {{ counter }} </td>
                         <td> {{ expenditure.description }} </td>
-                        <td> {{ expenditure.amount|number_format }} </td>
+                        <td> {{ expenditure.amount|number_format(2, ',', '.') }} </td>
                         <td> <a href="#" onclick="updateExpenditure({{ expenditure.idSession }}, {{ expenditure.id }});"> <i class="fas fa-pencil-alt"> </i> </a> 
                              <a href="#" onclick="deleteExpenditure({{ expenditure.idSession }}, {{ expenditure.id }});"><i class="fas fa-trash-alt"></i> </a>
                              </td>
                     </tr>
+                    {% set totalExpenses = totalExpenses + expenditure.amount %}
                     {% endfor %}
                     <tr class="text-center bg-dark text-white">
                         <th> TOTAL </th>
                         <th>  </th>
-                        <th> {{ expensesTotal|number_format }} </th>
+                        <th> {{ totalExpenses|number_format(2, ',', '.') }} </th>
                         <th> </th>
                     </tr>
                     <tr>

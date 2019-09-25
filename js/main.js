@@ -1,5 +1,192 @@
 var DEBUG = true;
 
+var CONFIG = {
+  base_url : 'http://www.lmsuy.local',
+  endpoints : {
+    sessions : {
+      list : {
+        method : 'get',
+        path : '/sessions/:idSession'
+      },
+      listAll : {
+        method : 'get',
+        path : '/sessions'
+      },
+      create : {
+        method : 'post',
+        path : '/sessions'
+      },
+      update : {
+        method : 'post',
+        path : '/sessions/:idSession/update'
+      },
+      delete : {
+        method : 'get',
+        path : '/sessions/:idSession/remove'
+      },
+      calculate : {
+        method : 'get',
+        path : '/sessions/:idSession/calculate'
+      }
+    },
+    users: {
+      list : {
+        method : 'get',
+        path : '/users/:idUser'
+      },
+      listAll : {
+        method : 'get',
+        path : '/users'
+      },
+      create : {
+        method : 'post',
+        path : '/users'
+      },
+      update : {
+        method : 'post',
+        path : '/users/:idUser/update'
+      },
+      delete : {
+        method : 'get',
+        path : '/users/:idUser/remove'
+      }   
+    },
+    comissions : {
+      list : {
+        method : 'get',
+        path : '/sessions/:idSession/comissions/:idComission'
+      },
+      listAll : {
+        method : 'get',
+        path : '/sessions/:idSession/comissions'
+      },
+      create : {
+        method : 'post',
+        path : '/sessions/:idSession/comissions'
+      },
+      update : {
+        method : 'post',
+        path : '/comissions/:idComission/update'
+      },
+      delete : {
+        method : 'get',
+        path : '/idSession/comissions/:idComission/remove'
+      }    
+    },
+    tips : {
+      listDealerTip : {
+        method : 'get',
+        path : '/sessions/:idSession/tips/dealerTip/:idDealerTip'
+      },
+      listServiceTip : {
+        method : 'get',
+        path : '/sessions/:idSession/tips/serviceTip/:idServiceTip'
+      },
+      listAll : {
+        method : 'get',
+        path : '/sessions/:idSession/tips'
+      },
+      create : {
+        method : 'post',
+        path : '/sessions/:idSession/tips'
+      },
+      updateDealerTip : {
+        method : 'post',
+        path : '/tips/dealerTip/:idDealerTip/update'
+      },
+      updateServiceTip : {
+        method : 'post',
+        path : '/tips/serviceTip/:idServiceTip/update'
+      },
+      deleteDealerTip : {
+        method : 'get',
+        path : '/tips/dealertip/:idDealerTip/remove'
+      },
+      deleteServiceTip : {
+        method : 'get',
+        path : '/tips/servicetip/:idServiceTip/remove'
+      } 
+    },
+    expenses : {
+      list : {
+        method : 'get',
+        path : '/sessions/:idSessions/expenses/:idExpenditure'
+      },
+      listAll : {
+        method : 'get',
+        path : '/sessions/:idSessions/expenses'
+      },
+      create : {
+        method : 'post',
+        path : '/sessions/:idSession/expenses'
+      },
+      update : {
+        method : 'post',
+        path : 'session/:idSession/expenses/:idExpenditure/update'
+      },
+      delete : {
+        method : 'get',
+        path : '/session/:idSession/expenses/:idExpenditure/remove'
+      } 
+    },
+    userSession : {
+      list : {
+        method : 'get',
+        path : '/sessions/:idSession/usersSession/:idUserSession'
+      },
+      listAll : {
+        method : 'get',
+        path : '/sessions/:idSession/usersSession'
+      },
+      create : {
+        method : 'post',
+        path : '/sessions/:idSession/usersSession'
+      },
+      update : {
+        method : 'post',
+        path : '/usersSession/:idusersession/update'
+      },
+      delete : {
+        method : 'get',
+        path : '/:idSession/usersSession/:idUserSession/remove'
+      },
+      close : {
+        method : 'get',
+        path : '/:idSession/userssession/:idusersession/close'
+      } 
+    },
+    buyins : {
+      list : {
+        method : 'get',
+        path : '/sessions/:idSession/buyins/:idBuyin'
+      },
+      listAll : {
+        method : 'get',
+        path : '/sessions/:idSessions/buyins'
+      },
+      create : {
+        method : 'post',
+        path : '/sessions/:idSession/buyins'
+      },
+      update : {
+        method : 'post',
+        path : '/buyins/:idBuyin/update'
+      },
+      delete : {
+        method : 'get',
+        path : '/:idSession/buyins/:idBuyin/remove'
+      } 
+    },
+  }
+};
+
+function parseRoute(path, args) {
+  for (var rep in args) {
+    path = path.replace(":"+rep, args[rep]);  
+  }
+  return CONFIG.base_url + path;
+}
+
 function debug(data) {
   if (DEBUG) {
     console.log(data);
@@ -84,11 +271,14 @@ function fetchSessions()
 {
     $('.nav-link.active').removeClass('active');
     $('#menuitem-sessions').addClass('active');
-    
     $('#forms').html('');
+    
+    var url = parseRoute(CONFIG.endpoints.sessions.listAll.path, {});
+    var method = CONFIG.endpoints.sessions.listAll.method;
+
     loadView(
-      'http://www.lmsuy.local/sessions', 
-      'get', 
+      url, 
+      method, 
       'templates/sessions-list.twig',
       function(template, data) {
         var output = template.render({
@@ -104,8 +294,15 @@ function fetchSessions()
 
 function deleteSession(idSession)
 {   
+    var url = parseRoute(CONFIG.endpoints.sessions.delete.path, { 
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.sessions.delete.method;
+
+    /*
     var url = 'http://www.lmsuy.local/sessions/' + idSession + '/remove';
     var method = 'get';
+    */
     makeAPIRequest(
       url,
       method,
@@ -116,7 +313,6 @@ function deleteSession(idSession)
         }
 
         fetchSessions();
-        debug(data);
       },
         function(err) {
           console.log(err)
@@ -124,15 +320,72 @@ function deleteSession(idSession)
       );
 }
 
+function calculatePoints(idSession)
+{   
+    var url = parseRoute(CONFIG.endpoints.sessions.calculate.path, { 
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.sessions.calculate.method;
+    makeAPIRequest(
+      url,
+      method,
+      function(response) {
+        if (response.status !== 200) {
+            errorHandler(response);
+            return;
+        }
+
+        debug('puntos cargados');
+        fetchSessions();
+      },
+        function(err) {
+          console.log(err)
+        }
+      );
+}
+
+function revisionSession(idSession)
+{   
+    debug('en revision session');
+    var url = parseRoute(CONFIG.endpoints.sessions.list.path, {  
+      "idSession" : idSession
+    });
+    debug(url);
+    var method = CONFIG.endpoints.sessions.list.method;
+    loadView(
+      url, 
+      method, 
+      'templates/revision-session.twig',
+      function(template, data) {
+        var output = template.render({
+          title : 'Revision de sesión',
+          action : url,
+          idSession : idSession,
+          session : data
+        });
+        debug("data");
+        debug(data);
+        $('#forms').html(output);
+      },
+      function(err) {
+        debug('Fetch Error :-S', err);
+      }
+    );
+}
+
+
+
 function fetchUsers()
 {
     $('.nav-link.active').removeClass('active');
     $('#menuitem-users').addClass('active');
-    
     $('#forms').html('');
+    var url = parseRoute(CONFIG.endpoints.users.listAll.path, {});
+    var method = CONFIG.endpoints.users.listAll.method;
+
     loadView(
-      'http://www.lmsuy.local/users', 
-      'get', 
+      url, 
+      method,
       'templates/users-list.twig',
       function(template, data) {
         var output = template.render({
@@ -148,8 +401,13 @@ function fetchUsers()
 
 function deleteUser(idUser)
 {   
-    var url = 'http://www.lmsuy.local/users/' + idUser + '/remove';
-    var method = 'get';
+    var url = parseRoute(CONFIG.endpoints.users.delete.path, { 
+      "idUser" : idUser
+    });
+    var method = CONFIG.endpoints.users.delete.method;
+
+    // var url = 'http://www.lmsuy.local/users/' + idUser + '/remove';
+    // var method = 'get';
     makeAPIRequest(
       url,
       method,
@@ -160,7 +418,6 @@ function deleteUser(idUser)
         }
 
         fetchUsers();
-        debug(data);
       },
         function(err) {
           console.log(err)
@@ -171,9 +428,14 @@ function deleteUser(idUser)
 function fetchBuyins(idSession)
 {   
     $('#forms').html('');
+    var url = parseRoute(CONFIG.endpoints.buyins.listAll.path, { 
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.buyins.listAll.method;
+
     loadView(
-      'http://www.lmsuy.local/sessions/' + idSession + '/buyins', 
-      'get', 
+      url, 
+      method, 
       'templates/buyins-list.twig',
       function(template, data) {
         var output = template.render({
@@ -190,8 +452,11 @@ function fetchBuyins(idSession)
 
 function deleteBuyin(idSession, idBuyin)
 {   
-    var url = 'http://www.lmsuy.local/' + idSession + '/buyins/' + idBuyin + '/remove';
-    var method = 'get';
+    var url = parseRoute(CONFIG.endpoints.buyins.delete.path, { 
+      "idBuyin" : idBuyin,
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.buyins.delete.method;
     makeAPIRequest(
       url,
       method,
@@ -210,17 +475,24 @@ function deleteBuyin(idSession, idBuyin)
       );
 }
 
-function fetchComissions(idSession)
+function fetchComissions(idSession, comissionTotal)
 {   
+    debug(comissionTotal);
     $('#forms').html('');
+    var url = parseRoute(CONFIG.endpoints.comissions.listAll.path, { 
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.comissions.listAll.method;
+
     loadView(
-      'http://www.lmsuy.local/sessions/' + idSession + '/comissions', 
-      'get', 
+      url, 
+      method, 
       'templates/comissions-list.twig',
       function(template, data) {
         var output = template.render({
           comissions : data,
-          idSession: idSession
+          idSession: idSession,
+          comissionTotal : comissionTotal
         });
 
         $('#main').html(output);
@@ -233,8 +505,11 @@ function fetchComissions(idSession)
 
 function deleteComission(idSession, idComission)
 {   
-    var url = 'http://www.lmsuy.local/' + idSession + '/comissions/' + idComission + '/remove';
-    var method = 'get';
+    var url = parseRoute(CONFIG.endpoints.comissions.delete.path, { 
+      "idComission" : idComission,
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.comissions.delete.method;
     makeAPIRequest(
       url,
       method,
@@ -257,9 +532,13 @@ function deleteComission(idSession, idComission)
 function fetchUsersSession(idSession)
 {   
     $('#forms').html('');
+    var url = parseRoute(CONFIG.endpoints.userSession.listAll.path, { 
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.userSession.listAll.method;
     loadView(
-      'http://www.lmsuy.local/sessions/' + idSession + '/usersSession', 
-      'get', 
+      url, 
+      method, 
       'templates/userssession-list.twig',
       function(template, data) {
         var output = template.render({
@@ -276,8 +555,13 @@ function fetchUsersSession(idSession)
 
 function deleteUserSession(idSession, idUserSession)
 {   
-    var url = 'http://www.lmsuy.local/' + idSession + '/usersSession/' + idUserSession + '/remove';
-    var method = 'get';
+    var url = parseRoute(CONFIG.endpoints.userSession.delete.path, { 
+      "idUserSession" : idUserSession,
+      "idSession" : idSession
+    });
+
+    debug("url"); debug(url);
+    var method = CONFIG.endpoints.userSession.delete.method;
     makeAPIRequest(
       url,
       method,
@@ -299,9 +583,13 @@ function deleteUserSession(idSession, idUserSession)
 function fetchExpenses(idSession)
 {   
     $('#forms').html('');
+    var url = parseRoute(CONFIG.endpoints.expenses.listAll.path, { 
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.expenses.listAll.method;
     loadView(
-      'http://www.lmsuy.local/sessions/' + idSession + '/expenses', 
-      'get', 
+      url, 
+      method, 
       'templates/expenses-list.twig',
       function(template, data) {
         var output = template.render({
@@ -318,8 +606,11 @@ function fetchExpenses(idSession)
 
 function deleteExpenditure(idSession, idExpenditure)
 {   
-    var url = 'http://www.lmsuy.local/sessions/' + idSession + '/expenses/' + idExpenditure + '/remove';
-    var method = 'get';
+    var url = parseRoute(CONFIG.endpoints.expenses.delete.path, { 
+      "idExpenditure" : idExpenditure,
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.expenses.delete.method;
     makeAPIRequest(
       url,
       method,
@@ -341,9 +632,13 @@ function deleteExpenditure(idSession, idExpenditure)
 function fetchTips(idSession)
 {   
     $('#forms').html('');
+    var url = parseRoute(CONFIG.endpoints.tips.listAll.path, {
+        "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.tips.listAll.method;
     loadView(
-      'http://www.lmsuy.local/sessions/' + idSession + '/tips', 
-      'get', 
+      url, 
+      method, 
       'templates/tips-list.twig',
       function(template, data) {
         var output = template.render(
@@ -363,8 +658,11 @@ function fetchTips(idSession)
 
 function deleteDealerTip(idSession, idDealerTip)
 {   
-    var url = 'http://www.lmsuy.local/' + 'tips/dealertip/' + idDealerTip + '/remove';
-    var method = 'get';
+    var url = parseRoute(CONFIG.endpoints.tips.deleteDealerTip.path, { 
+      "idDealerTip" : idDealerTip,
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.tips.deleteDealerTip.method;
     makeAPIRequest(
       url,
       method,
@@ -385,8 +683,11 @@ function deleteDealerTip(idSession, idDealerTip)
 
 function deleteServiceTip(idSession, idServiceTip)
 {   
-    var url = 'http://www.lmsuy.local/' + 'tips/servicetip/' + idServiceTip + '/remove';
-    var method = 'get';
+    var url = parseRoute(CONFIG.endpoints.tips.deleteServiceTip.path, { 
+      "idServiceTip" : idServiceTip,
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.tips.deleteServiceTip.method;
     makeAPIRequest(
       url,
       method,
@@ -409,17 +710,25 @@ function deleteServiceTip(idSession, idServiceTip)
 
 function updateComission(idSession, idComission)
 {   
+    var url = parseRoute(CONFIG.endpoints.comissions.list.path, {  
+      "idComission" : idComission,
+      "idSession" : idSession
+    });
+    debug(url);
+    var method = CONFIG.endpoints.comissions.list.method;
     loadView(
-      'http://www.lmsuy.local/sessions/' + idSession + '/comissions/' + idComission, 
-      'get', 
+      url, 
+      method, 
       'templates/comission-form.twig',
       function(template, data) {
         var output = template.render({
           title : 'Editar Comisión',
-          action : 'http://www.lmsuy.local/comissions/' + idComission + '/update',
+          action : url,
           buttonName : 'Editar',
           idSession : idSession
         });
+        debug("dataa");
+        debug(data);
         $('#forms').html(output);
         $('#id').val(data.id);
         $('#idSession').val(data.idSession);
@@ -478,11 +787,14 @@ function addComission(idSession)
       //   when the template is loaded.
       load: function(tpl) {
         var now = getCurrentDate();
+        var url = parseRoute(CONFIG.endpoints.comissions.create.path, { 
+          "idSession" : idSession
+        });
         var output = tpl.render({
           idSession : idSession,
           session : null,
           title: 'Agregar comisión',
-          action : 'http://www.lmsuy.local/sessions/' + idSession + '/comissions',
+          action : url,
           buttonName : 'Agregar'
         });
         $('#forms').html(output);
@@ -495,17 +807,20 @@ function addComission(idSession)
 
 function updateBuyin(idSession, idBuyin)
 {   
-    let dir = 'http://www.lmsuy.local/sessions/' + idSession + '/buyins/' + idBuyin;
-    console.log(dir);
+    var url = parseRoute(CONFIG.endpoints.buyins.list.path, { 
+      "idBuyin" : idBuyin,
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.buyins.list.method;
     loadView(
-      'http://www.lmsuy.local/sessions/' + idSession + '/buyins/' + idBuyin, 
-      'get', 
+      url, 
+      method, 
       'templates/buyin-form.twig',
       function(template, data) {
         var output = template.render({
           buyin : data,
           title : 'Editar Buyin',
-          action : 'http://www.lmsuy.local/buyins/' + idBuyin + '/update',
+          action : url,
           buttonName : 'Editar',
           idSession : idSession
         });
@@ -564,16 +879,22 @@ function addBuyin(idSession)
       //   when the template is loaded.
       load: function(tpl) {
         var now = getCurrentDate();
+        var url = parseRoute(CONFIG.endpoints.buyins.create.path, { 
+          "idSession" : idSession
+        });
+        var method = CONFIG.endpoints.buyins.create.method;
         var output = tpl.render({
           idSession : idSession,
           session : null,
           title: 'Agregar Buyin',
-          action : 'http://www.lmsuy.local/sessions/' + idSession + '/buyins',
+          action : url,
           buttonName : 'Agregar'
         });
         $('#forms').html(output);
         $('#idSession').val(idSession);
         $('#hour').val(now["date"] + "T" + now["hour"]);
+        $('#approved').val(1);
+        $('#currency').val(1);
         var loadUsers = function() {
           makeAPIRequest(
           'http://www.lmsuy.local/sessions/' + idSession + '/usersSession',
@@ -590,10 +911,11 @@ function addBuyin(idSession)
               
               // hacer un for
               // agregar los options al select
+              debug("userssession"); debug(data);
               data.forEach(function(item) {
                 debug(item);
-                if (item.end == null) {
-                    $('#idUserSession').append('<option value="'+item.id+'">'+item.user.name+' '+item.lastname+'</option>');
+                if (item.endTime == null) {
+                    $('#idUserSession').append('<option value="'+item.id+'">'+item.user.name+' '+item.user.lastname+'</option>');
                 }
               });
             });
@@ -610,15 +932,20 @@ function addBuyin(idSession)
 
 function updateExpenditure(idSession, idExpenditure)
 {   
+    var url = parseRoute(CONFIG.endpoints.expenses.list.path, { 
+      "idExpenditure" : idExpenditure,
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.expenses.list.method;
     loadView(
-      'http://www.lmsuy.local/sessions/' + idSession + '/expenses/' + idExpenditure, 
-      'get', 
+      url, 
+      method, 
       'templates/expenditure-form.twig',
       function(template, data) {
         var output = template.render({
           expenditure : data,
           title : 'Editar Gasto',
-          action : 'http://www.lmsuy.local/sessions/' + idSession + '/expenses/' + idExpenditure + '/update',
+          action : url,
           buttonName : 'Editar',
           idSession : idSession
         });
@@ -674,11 +1001,14 @@ function addExpenditure(idSession)
       // The default is to load asynchronously, and call the load function 
       //   when the template is loaded.
       load: function(tpl) {
+        var url = parseRoute(CONFIG.endpoints.expenses.create.path, { 
+          "idSession" : idSession
+        });
         var output = tpl.render({
           idSession : idSession,
           session : null,
           title: 'Agregar Gasto',
-          action : 'http://www.lmsuy.local/sessions/' + idSession + '/expenses',
+          action : url,
           buttonName : 'Agregar'
         });
         $('#forms').html(output);
@@ -689,15 +1019,20 @@ function addExpenditure(idSession)
 
 function updateDealerTip(idSession, idDealerTip)
 {   
+    var url = parseRoute(CONFIG.endpoints.tips.listDealerTip.path, { 
+      "idDealerTip" : idDealerTip,
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.tips.listDealerTip.method;
     loadView(
-      'http://www.lmsuy.local/sessions/' + idSession + '/tips/dealerTip/' + idDealerTip, 
-      'get', 
+      url, 
+      method, 
       'templates/dealerTip-form.twig',
       function(template, data) {
         var output = template.render({
           dealerTip : data.dealerTip,
           title : 'Editar Dealer Tip',
-          action : 'http://www.lmsuy.local/tips/dealertip/' + idDealerTip + '/update',
+          action : url,
           buttonName : 'Editar',
           idSession : idSession
         });
@@ -754,6 +1089,9 @@ function addTips(idSession)
       //   when the template is loaded.
       load: function(tpl) {
         var now = getCurrentDate();
+        var url = parseRoute(CONFIG.endpoints.tips.create.path, { 
+          "idSession" : idSession
+        });
         var output = tpl.render({
           idSession : idSession,
           session : null,
@@ -800,15 +1138,20 @@ function tipsSubmit(idSession)
 
 function updateServiceTip(idSession, idServiceTip)
 {   
+    var url = parseRoute(CONFIG.endpoints.tips.listServiceTip.path, { 
+      "idServiceTip" : idServiceTip,
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.tips.listServiceTip.method;
     loadView(
-      'http://www.lmsuy.local/sessions/' + idSession + '/tips/serviceTip/' + idServiceTip, 
-      'get', 
+      url, 
+      method, 
       'templates/serviceTip-form.twig',
       function(template, data) {
         var output = template.render({
           serviceTip : data.serviceTip,
           title : 'Editar Service Tip',
-          action : 'http://www.lmsuy.local/tips/servicetip/' + idServiceTip + '/update',
+          action : url,
           buttonName : 'Editar',
           idSession : idSession
         });
@@ -855,17 +1198,25 @@ function serviceTipSubmit(idSession)
   );
 }
 
+// /userssession/{{ user.id }}/formclose
+
 function updateUserSession(idSession, idUserSession)
 {   
+    var url = parseRoute(CONFIG.endpoints.userSession.list.path, { 
+      "idUserSession" : idUserSession,
+      "idSession" : idSession
+    });
+    debug(url);
+    var method = CONFIG.endpoints.userSession.list.method;
     loadView(
-      'http://www.lmsuy.local/sessions/' + idSession + '/usersSession/' + idUserSession, 
-      'get', 
-      'templates/userSession-form.twig',
+      url, 
+      method, 
+      'templates/usersession-form.twig',
       function(template, data) {
         var output = template.render({
           userSession : data,
           title : 'Editar Usuario',
-          action : 'http://www.lmsuy.local/usersSession/' + idUserSession + '/update',
+          action : url,
           buttonName : 'Editar',
           idSession : idSession
         });
@@ -885,11 +1236,50 @@ function updateUserSession(idSession, idUserSession)
     );
 }
 
+
+function closeUserSession(idSession, idUserSession)
+{   
+    var url = parseRoute(CONFIG.endpoints.userSession.close.path, { 
+      "idUserSession" : idUserSession
+    });
+    var method = CONFIG.endpoints.userSession.close.method;
+    loadView(
+      url, 
+      method, 
+      'templates/usersessionclose-form.twig',
+      function(template, data) {
+        var now = getCurrentDate();
+        var output = template.render({
+          userSession : data,
+          title : 'Cerrar sessión de usuario',
+          action : url,
+          buttonName : 'Enviar',
+          idSession : idSession
+        });
+
+        $('#forms').html(output);
+        $('#id').val(data.id);
+        $('#idUser').val(data.user.id);
+        $('#idSession').val(data.idSession);
+        $('#points').val(data.points);
+        $('#isApproved').val(data.isApproved);
+        $('#cashout').val(data.cashout);
+        $('#isApproved').val(data.isApproved);
+        $('#start').val(data.startTime.date.substr(0,10) + 'T' + data.startTime.date.substr(11,5));
+        $('#end').val(now["date"] + "T" + now["hour"]);
+      },
+      function(err) {
+        debug('Fetch Error :-S', err);
+      }
+    );
+}
+
 function userSessionSubmit(idSession)
 {
   var url    = $('#userssession-form').attr("action");
   var method = $('#userssession-form').attr("method");
   var form = new FormData(document.getElementById('userssession-form'));
+  debug(form);
   debug('url: ' + url); debug('method: ' + method);
   makeAPIRequest(
     url,
@@ -925,11 +1315,14 @@ function addUserSession(idSession)
       // The default is to load asynchronously, and call the load function 
       //   when the template is loaded.
       load: function(tpl) {
+        var url = parseRoute(CONFIG.endpoints.userSession.create.path, { 
+          "idSession" : idSession
+        });
         var output = tpl.render({
           idSession : idSession,
           session : null,
           title: 'Agregar Usuario',
-          action : 'http://www.lmsuy.local/sessions/' + idSession + '/usersSession',
+          action : url,
           buttonName : 'Agregar'
         });
         $('#forms').html(output);
@@ -968,22 +1361,42 @@ function addUserSession(idSession)
 
 function updateUser(idUser)
 {   
+    var url = parseRoute(CONFIG.endpoints.users.list.path, { 
+      "idUser" : idUser
+    });
+    var method = CONFIG.endpoints.users.list.method;
     loadView(
-      'http://www.lmsuy.local/users/' + idUser, 
-      'get', 
+      url, 
+      method, 
       'templates/user-form.twig',
       function(template, data) {
         var output = template.render({
           user : data,
           title : 'Editar Usuario',
-          action : 'http://www.lmsuy.local/users/' + idUser + '/update',
-          buttonName : 'Editar',
-          idSession : idSession
+          action : parseRoute(CONFIG.endpoints.users.update.path, { 
+                      "idUser" : idUser
+                   }),
+          buttonName : 'Editar'
         });
+
+        debug(url);
         $('#forms').html(output);
         $('#id').val(data.id);
-        $('#idSession').val(data.idSession);
-        $('#comission').val(data.comission);
+        $('#lastname').val(data.lastname);
+        $('#firstname').val(data.name);
+        $('#username').val(data.username);
+        $('#mobile').val(data.mobile);
+        $('#email').val(data.email);
+        $('#multiplier').val(data.multiplier);
+        $('#password').val(data.password);
+        $('#active').val(data.active);
+        $('#sessions').val(data.sessions);
+        $('#points').val(data.points);
+        $('#results').val(data.results);
+        $('#cashin').val(data.cashin);
+        $('#hours').val(data.hours);
+        $('#active').val(data.isActive);
+
       },
       function(err) {
         debug('Fetch Error :-S', err);
@@ -993,9 +1406,9 @@ function updateUser(idUser)
 
 function userSubmit(idSession)
 {
-  var url    = $('#comissions-form').attr("action");
-  var method = $('#comissions-form').attr("method");
-  var form = new FormData(document.getElementById('comissions-form'));
+  var url    = $('#users-form').attr("action");
+  var method = $('#users-form').attr("method");
+  var form = new FormData(document.getElementById('users-form'));
   var errorHandler = function(err) {
     console.log(err)
   };
@@ -1013,8 +1426,7 @@ function userSubmit(idSession)
         // CERRAR EL FORMULARIO
         $('#forms').html('');
         // ACTUALIZAR LA TABLA
-        fetchComissions(idSession);
-        debug(data);
+        fetchUsers();
       });
     },
    errorHandler,
@@ -1031,27 +1443,43 @@ function addUser()
       // The default is to load asynchronously, and call the load function 
       //   when the template is loaded.
       load: function(tpl) {
+        var url = parseRoute(CONFIG.endpoints.users.create.path, {});
+        debug(url);
         var output = tpl.render({
           title: 'Agregar Usuario',
-          action : 'http://www.lmsuy.local/users',
+          action : url,
           buttonName : 'Agregar'
         });
         $('#forms').html(output);
+        $('#password').val(1234);
+        $('#active').val(1);
+        $('#sessions').val(0);
+        $('#points').val(0);
+        $('#results').val(0);
+        $('#cashin').val(0);
+        $('#hours').val(0);
       }
   });
 }
 
 function updateSession(idSession)
 {   
+
+    var url = parseRoute(CONFIG.endpoints.sessions.list.path, { 
+      "idSession" : idSession
+    });
+    var method = CONFIG.endpoints.sessions.list.method;
     loadView(
-      'http://www.lmsuy.local/sessions/' + idSession, 
-      'get', 
+      url, 
+      method, 
       'templates/session-form.twig',
       function(template, data) {
         var output = template.render({
           user : data,
           title : 'Editar Sesión',
-          action : 'http://www.lmsuy.local/sessions/' + idSession + '/update',
+          action : parseRoute(CONFIG.endpoints.sessions.update.path, { 
+                      "idSession" : idSession
+                   }),
           buttonName : 'Editar',
           idSession : idSession
         });
@@ -1075,6 +1503,8 @@ function sessionSubmit()
 {
   var url    = $('#sessions-form').attr("action");
   var method = $('#sessions-form').attr("method");
+  debug(method);
+  debug(url);
   var form = new FormData(document.getElementById('sessions-form'));
   var errorHandler = function(err) {
     console.log(err)
@@ -1094,7 +1524,6 @@ function sessionSubmit()
         $('#forms').html('');
         // ACTUALIZAR LA TABLA
         fetchSessions();
-        debug(data);
       });
     },
    errorHandler,
@@ -1112,9 +1541,12 @@ function addSession()
       //   when the template is loaded.
       load: function(tpl) {
         var now = getCurrentDate();
+        var url = parseRoute(CONFIG.endpoints.sessions.create.path, {});
+        debug("url"); debug(url);
+
         var output = tpl.render({
           title: 'Agregar Sesión',
-          action : 'http://www.lmsuy.local/sessions',
+          action : url,
           buttonName : 'Agregar'
         });
         $('#forms').html(output);

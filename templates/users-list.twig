@@ -14,9 +14,11 @@
                         <td colspan="9"> sin registros </td>
                     </tr>
                     {% endif %}
+                    {% set counter = (counter|default(0)) %}
                     {% for user in users %}
                     <tr>
-                        <th> {% set counter = (counter|default(0)) + 1 %}
+                        <th> 
+                            {% set counter = (counter|default(counter)) + 1 %}
                             <p>{{ counter }}</p>
                         </th>
                         <td> {{ user.name }} {{ user.lastname }} </td>

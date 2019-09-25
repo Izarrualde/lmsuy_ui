@@ -18,9 +18,10 @@
                         </td>
                         <td> {{ user.startTime.date|date('H:i') }}
                         </td>
-                        <td> {{ user.cashin|number_format }} ({{ user.totalCredit|number_format }}) </td>
+                        <td> {{ user.cashin|number_format(2, ',', '.') }} ({{ user.totalCredit|number_format(2, ',', '.') }}) </td>
                         <td> {{ user.cashout|default("-") }} </td>
-                        <td> <a href="/userssession/{{ user.id }}/formclose"> <i class="fas fa-sign-out-alt"></i> </a> 
+                        <td> <a href="#" onclick="closeUserSession({{ user.idSession }}, {{ user.id }});"> 
+                             <i class="fas fa-sign-out-alt"></i> </a> 
                              <a href="#" onclick="updateUserSession({{ user.idSession }}, {{ user.id }});"> <i class="fas fa-pencil-alt"> </i> </a> 
                              <a href="#" onclick="deleteUserSession({{ user.idSession }}, {{ user.id }});"> <i class="fas fa-trash-alt"></i> </a> 
                              </td>
@@ -36,4 +37,48 @@
             </table>
         </article>
     </section>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        Usuarios Inactivos
+    </div>
+    <div class="card-body">
+        <section class="container row" style="width: auto; margin: auto auto;">
+            <article class="col-md-12">
+                <table class="table table-bordered table-hover table-condensed">
+                    <thead class="text-center bg-dark text-white">
+                        <th> Inactivo </th>
+                        <th> Hora <br> de inicio </th>
+                        <th> Cashin </th>
+                        <th> Cashout </th>
+                        <th> Hora <br> de fin </th>
+                        <th> acciones </th>
+                    </thead>
+                    <tbody class="text-center">
+                        {# {% include 'withoutRecords.html.twig' %} #}
+                        {% for user in usersSession %}
+                        {% if user.endTime is not empty %}
+                        <tr class="text-center">
+                            <td>
+                                {{ user.user.name }} {{ user.user.lastname }}
+                            </td>
+                            <td> {{ user.startTime.date|date('H:i') }} </td>
+                            <td> {{ user.cashin|number_format(2, ',', '.') }} ({{ user.totalCredit|number_format(2, ',', '.') }}) </td>
+                            <td> {{ user.cashout|number_format(2, ',', '.') }} </td>
+                            <td> {{ user.endTime.date|date('H:i') }}
+                            </td>
+                            <td>  
+                                 <a href="#" onclick="updateUserSession({{ user.idSession }}, {{ user.id }});"> <i class="fas fa-pencil-alt"> </i> </a> 
+                                 <a href="#" onclick="deleteUserSession({{ user.idSession }}, {{ user.id }});"> <i class="fas fa-trash-alt"></i> </a> 
+                            </td>
+                        </tr>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </article>
+        </section>
+    </div>
 </div>
