@@ -92,11 +92,11 @@ var CONFIG = {
       },
       updateDealerTip : {
         method : 'post',
-        path : '/tips/dealerTip/:idDealerTip/update'
+        path : '/tips/dealertip/:idDealerTip/update'
       },
       updateServiceTip : {
         method : 'post',
-        path : '/tips/serviceTip/:idServiceTip/update'
+        path : '/tips/servicetip/:idServiceTip/update'
       },
       deleteDealerTip : {
         method : 'get',
@@ -144,7 +144,7 @@ var CONFIG = {
       },
       update : {
         method : 'post',
-        path : '/usersSession/:idusersession/update'
+        path : '/usersSession/:idUserSession/update'
       },
       delete : {
         method : 'get',
@@ -152,7 +152,7 @@ var CONFIG = {
       },
       close : {
         method : 'get',
-        path : '/:idSession/userssession/:idusersession/close'
+        path : '/:idSession/usersSession/:idUserSession/close'
       } 
     },
     buyins : {
@@ -723,7 +723,9 @@ function updateComission(idSession, idComission)
       function(template, data) {
         var output = template.render({
           title : 'Editar Comisión',
-          action : url,
+          action : parseRoute(CONFIG.endpoints.comissions.update.path, { 
+                      "idComission" : idComission
+                   }),
           buttonName : 'Editar',
           idSession : idSession
         });
@@ -820,7 +822,9 @@ function updateBuyin(idSession, idBuyin)
         var output = template.render({
           buyin : data,
           title : 'Editar Buyin',
-          action : url,
+          action : parseRoute(CONFIG.endpoints.buyins.update.path, { 
+                      "idBuyin" : idBuyin
+                   }),
           buttonName : 'Editar',
           idSession : idSession
         });
@@ -831,6 +835,7 @@ function updateBuyin(idSession, idBuyin)
         $('#amountCash').val(data.amountCash);
         $('#amountCredit').val(data.amountCredit);
         $('#approved').val(data.approved);
+        $('#currency').val(data.currency);
         $('#hour').val(data.hour.date.substr(0,10) + 'T' + data.hour.date.substr(11,5));
       },
       function(err) {
@@ -945,7 +950,10 @@ function updateExpenditure(idSession, idExpenditure)
         var output = template.render({
           expenditure : data,
           title : 'Editar Gasto',
-          action : url,
+          action : parseRoute(CONFIG.endpoints.expenses.update.path, { 
+                      "idSession" : idSession,
+                      "idExpenditure" : idExpenditure
+                   }),
           buttonName : 'Editar',
           idSession : idSession
         });
@@ -1032,7 +1040,9 @@ function updateDealerTip(idSession, idDealerTip)
         var output = template.render({
           dealerTip : data.dealerTip,
           title : 'Editar Dealer Tip',
-          action : url,
+          action : parseRoute(CONFIG.endpoints.tips.updateDealerTip.path, { 
+                      "idDealerTip" : idDealerTip
+                   }),
           buttonName : 'Editar',
           idSession : idSession
         });
@@ -1053,6 +1063,7 @@ function dealerTipSubmit(idSession)
 {
   var url    = $('#dealerTips-form').attr("action");
   var method = $('#dealerTips-form').attr("method");
+    debug(url);
   var form = new FormData(document.getElementById('dealerTips-form'));
   makeAPIRequest(
     url,
@@ -1151,7 +1162,9 @@ function updateServiceTip(idSession, idServiceTip)
         var output = template.render({
           serviceTip : data.serviceTip,
           title : 'Editar Service Tip',
-          action : url,
+          action : parseRoute(CONFIG.endpoints.tips.updateServiceTip.path, { 
+                      "idServiceTip" : idServiceTip
+                   }),
           buttonName : 'Editar',
           idSession : idSession
         });
@@ -1216,7 +1229,9 @@ function updateUserSession(idSession, idUserSession)
         var output = template.render({
           userSession : data,
           title : 'Editar Usuario',
-          action : url,
+          action : parseRoute(CONFIG.endpoints.userSession.update.path, { 
+                      "idUserSession" : idUserSession
+                   }),
           buttonName : 'Editar',
           idSession : idSession
         });
@@ -1239,7 +1254,7 @@ function updateUserSession(idSession, idUserSession)
 
 function closeUserSession(idSession, idUserSession)
 {   
-    var url = parseRoute(CONFIG.endpoints.userSession.close.path, { 
+    var url = parseRoute(CONFIG.endpoints.userSession.list.path, { 
       "idUserSession" : idUserSession
     });
     var method = CONFIG.endpoints.userSession.close.method;
@@ -1248,11 +1263,15 @@ function closeUserSession(idSession, idUserSession)
       method, 
       'templates/usersessionclose-form.twig',
       function(template, data) {
+        debug(data);
         var now = getCurrentDate();
         var output = template.render({
           userSession : data,
           title : 'Cerrar sessión de usuario',
-          action : url,
+          action : parseRoute(CONFIG.endpoints.userSession.close.path, { 
+                      "idSession" : idSession,
+                      "idUserSession" : idUserSession
+                   }),
           buttonName : 'Enviar',
           idSession : idSession
         });
@@ -1264,7 +1283,6 @@ function closeUserSession(idSession, idUserSession)
         $('#points').val(data.points);
         $('#isApproved').val(data.isApproved);
         $('#cashout').val(data.cashout);
-        $('#isApproved').val(data.isApproved);
         $('#start').val(data.startTime.date.substr(0,10) + 'T' + data.startTime.date.substr(11,5));
         $('#end').val(now["date"] + "T" + now["hour"]);
       },
@@ -1272,6 +1290,7 @@ function closeUserSession(idSession, idUserSession)
         debug('Fetch Error :-S', err);
       }
     );
+
 }
 
 function userSessionSubmit(idSession)
@@ -1279,8 +1298,7 @@ function userSessionSubmit(idSession)
   var url    = $('#userssession-form').attr("action");
   var method = $('#userssession-form').attr("method");
   var form = new FormData(document.getElementById('userssession-form'));
-  debug(form);
-  debug('url: ' + url); debug('method: ' + method);
+
   makeAPIRequest(
     url,
     method,
@@ -1487,6 +1505,7 @@ function updateSession(idSession)
         $('#id').val(data.id);
         $('#idSession').val(data.idSession);
         $('#description').val(data.description);
+        $('#title').val(data.title);
         $('#rakebackClass').val(data.rakebackClass);
         $('#date').val(data.created_at.date.substr(0,10));
         $('#start_at').val(data.startTime.date.substr(0,10) + 'T' + data.startTime.date.substr(11,5));
