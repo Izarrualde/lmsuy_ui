@@ -269,6 +269,7 @@ function loadView(url, method, templatePath, renderer, errorHandler) {
 
 function fetchSessions()
 {
+    debug("en fetchSessions");
     $('.nav-link.active').removeClass('active');
     $('#menuitem-sessions').addClass('active');
     $('#forms').html('');
@@ -372,7 +373,6 @@ function revisionSession(idSession)
       }
     );
 }
-
 
 
 function fetchUsers()
@@ -714,7 +714,6 @@ function updateComission(idSession, idComission)
       "idComission" : idComission,
       "idSession" : idSession
     });
-    debug(url);
     var method = CONFIG.endpoints.comissions.list.method;
     loadView(
       url, 
@@ -729,18 +728,12 @@ function updateComission(idSession, idComission)
           buttonName : 'Editar',
           idSession : idSession
         });
-        debug("dataa");
         debug(data);
         $('#forms').html(output);
         $('#id').val(data.id);
         $('#idSession').val(data.idSession);
         $('#comission').val(data.comission);
         $('#hour').val(data.hour.date.substr(0,10) + 'T' + data.hour.date.substr(11,5));
-
-        // debug(data.hour.date.substr(0,10) + 'T' + data.hour.date.substr(11,5));
-        // yyyy-MM-ddThh:mm
-        // date: "2019-09-09 00:00:00.000000"
-
       },
       function(err) {
         debug('Fetch Error :-S', err);
@@ -876,6 +869,7 @@ function buyinSubmit(idSession)
 
 function addBuyin(idSession)
 {   
+  debug("en add buyin");
   // cargo el template de form
   var template = twig({
       href: 'templates/buyin-formAdd.twig',
@@ -900,10 +894,14 @@ function addBuyin(idSession)
         $('#hour').val(now["date"] + "T" + now["hour"]);
         $('#approved').val(1);
         $('#currency').val(1);
+        var url_usersSession = parseRoute(CONFIG.endpoints.userSession.listAll.path, { 
+          "idSession" : idSession
+        });
+        var method_listAll = CONFIG.endpoints.userSession.listAll.method;
         var loadUsers = function() {
           makeAPIRequest(
-          'http://www.lmsuy.local/sessions/' + idSession + '/usersSession',
-          'get',
+          url_usersSession,
+          method_listAll,
           function(response) {
             if (response.status !== 200) {
                 // si falla fetch usuarios hay que reintentarlo con un max retries
@@ -916,7 +914,6 @@ function addBuyin(idSession)
               
               // hacer un for
               // agregar los options al select
-              debug("userssession"); debug(data);
               data.forEach(function(item) {
                 debug(item);
                 if (item.endTime == null) {
@@ -1107,7 +1104,7 @@ function addTips(idSession)
           idSession : idSession,
           session : null,
           title: 'Agregar Tips',
-          action : 'http://www.lmsuy.local/sessions/' + idSession + '/tips',
+          action : url,
           buttonName : 'Agregar'
         });
         $('#forms').html(output);
@@ -1345,10 +1342,14 @@ function addUserSession(idSession)
         });
         $('#forms').html(output);
         $('#idSession').val(idSession);
+        var url_users = parseRoute(CONFIG.endpoints.users.listAll.path, { 
+          "idSession" : idSession
+        });
+        var method_listAll = CONFIG.endpoints.users.listAll.method;
         var loadUsers = function() {
           makeAPIRequest(
-          'http://www.lmsuy.local/users',
-          'get',
+          url_users,
+          method_listAll,
           function(response) {
             if (response.status !== 200) {
                 // si falla fetch usuarios hay que reintentarlo con un max retries
@@ -1482,7 +1483,6 @@ function addUser()
 
 function updateSession(idSession)
 {   
-
     var url = parseRoute(CONFIG.endpoints.sessions.list.path, { 
       "idSession" : idSession
     });
