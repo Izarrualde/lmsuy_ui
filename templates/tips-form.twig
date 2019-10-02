@@ -9,20 +9,20 @@
                     <article>
                         <form class="was-validated" id="tips-form" onsubmit="tipsSubmit({{ idSession }}); return false;" action="{{ action }}" method="post">
 
-                            <input type="hidden" class="form-control" name="idSession" id="idSession" type="text" placeholder="IdSession" required="true" value="">
+                            <input type="hidden" class="form-control" name="idSession" id="idSession" type="text" placeholder="IdSession" required="true">
 
                             <div class="form-group">
                                 <label class="sr-only" for="hour"> hour: </label>
-                                <input class="form-control" name="hour" id="hour" type="datetime-local" required="true" value="">
+                                <input class="form-control" name="hour" id="hour" type="datetime-local" required="true">
                                 <small id="hour" class="form-tet text-muted"> Hora </small>
                             </div>
                             <div class="form-group">
                                 <label class="sr-only" for="tip"> dealerTip: </label>
-                                <input class="form-control" name="dealerTip" id="dealerTip" type="number" autofocus="true" placeholder="DealerTip" required="true" value="">
+                                <input class="form-control" name="dealerTip" id="dealerTip" type="number" placeholder="DealerTip" required="true">
                             </div>
                             <div class="form-group">
                                 <label class="sr-only" for="tip"> serviceTip: </label>
-                                <input class="form-control" name="serviceTip" id="serviceTip" type="number" placeholder="ServiceTip" required="true" value="">
+                                <input class="form-control" name="serviceTip" id="serviceTip" type="number" placeholder="ServiceTip" required="true">
                             </div>
                             <div class="form-group">
                                 <input class="btn btn-lg btn-block btn-primary" type="submit" value="{{ buttonName }}" />

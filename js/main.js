@@ -546,6 +546,15 @@ function fetchUsersSession(idSession)
           idSession: idSession
         });
         $('#main').html(output);
+        
+        /*
+        data.forEach(function(item) {
+          if ((item.cashin) > 0) {
+            $(#item.id).addClass("button-disabled");
+          }  
+        });
+        */
+        
       },
       function(err) {
         debug('Fetch Error :-S', err);
@@ -734,6 +743,7 @@ function updateComission(idSession, idComission)
         $('#idSession').val(data.idSession);
         $('#comission').val(data.comission);
         $('#hour').val(data.hour.date.substr(0,10) + 'T' + data.hour.date.substr(11,5));
+        $('#comission').focus();
       },
       function(err) {
         debug('Fetch Error :-S', err);
@@ -794,7 +804,8 @@ function addComission(idSession)
         });
         $('#forms').html(output);
         $('#idSession').val(idSession);
-        $('#hour').val(now["date"] + "T" + now["hour"]); 
+        $('#hour').val(now["date"] + "T" + now["hour"]);
+        $('#comission').focus();
       }
   });
 }
@@ -830,6 +841,7 @@ function updateBuyin(idSession, idBuyin)
         $('#approved').val(data.approved);
         $('#currency').val(data.currency);
         $('#hour').val(data.hour.date.substr(0,10) + 'T' + data.hour.date.substr(11,5));
+        $('#amountCash').focus();
       },
       function(err) {
         debug('Fetch Error :-S', err);
@@ -867,9 +879,21 @@ function buyinSubmit(idSession)
   );
 }
 
+/*
+function suggestedDate(sessionDate) 
+{
+  var now = getCurrentDate();
+
+  if sessionDate - now["date"] > 24 hs {
+    return sessionDate;
+  } else {
+    return now["date"] + "T" + now["hour"];
+  }
+}
+*/
 function addBuyin(idSession)
 {   
-  debug("en add buyin");
+
   // cargo el template de form
   var template = twig({
       href: 'templates/buyin-formAdd.twig',
@@ -877,7 +901,7 @@ function addBuyin(idSession)
       // The default is to load asynchronously, and call the load function 
       //   when the template is loaded.
       load: function(tpl) {
-        var now = getCurrentDate();
+        
         var url = parseRoute(CONFIG.endpoints.buyins.create.path, { 
           "idSession" : idSession
         });
@@ -891,9 +915,11 @@ function addBuyin(idSession)
         });
         $('#forms').html(output);
         $('#idSession').val(idSession);
-        $('#hour').val(now["date"] + "T" + now["hour"]);
+        // $('#hour').val(now["date"] + "T" + now["hour"]);
+        // $('#hour').val(suggestedDate(session.date)); // fetchSession 
         $('#approved').val(1);
         $('#currency').val(1);
+        $('#amountCash').focus();
         var url_usersSession = parseRoute(CONFIG.endpoints.userSession.listAll.path, { 
           "idSession" : idSession
         });
@@ -960,6 +986,7 @@ function updateExpenditure(idSession, idExpenditure)
         $('#idSession').val(data.idSession);
         $('#description').val(data.description);
         $('#amount').val(data.amount);
+        $('#description').focus();
       },
       function(err) {
         debug('Fetch Error :-S', err);
@@ -1049,6 +1076,7 @@ function updateDealerTip(idSession, idDealerTip)
         $('#idSession').val(data.idSession);
         $('#hour').val(data.hour.date.substr(0,10) + 'T' + data.hour.date.substr(11,5));
         $('#dealerTip').val(data.dealerTip);
+        $('#dealerTip').focus();
       },
       function(err) {
         debug('Fetch Error :-S', err);
@@ -1171,6 +1199,7 @@ function updateServiceTip(idSession, idServiceTip)
         $('#idSession').val(data.idSession);
         $('#hour').val(data.hour.date.substr(0,10) + 'T' + data.hour.date.substr(11,5));
         $('#serviceTip').val(data.serviceTip);
+        $('#serviceTip').focus();
       },
       function(err) {
         debug('Fetch Error :-S', err);
@@ -1210,13 +1239,17 @@ function serviceTipSubmit(idSession)
 
 // /userssession/{{ user.id }}/formclose
 
-function updateUserSession(idSession, idUserSession)
+function updateUserSession(button, idSession, idUserSession)
 {   
+    if ($(button).hasClass("button-disabled")) {
+      return;
+    }
+
     var url = parseRoute(CONFIG.endpoints.userSession.list.path, { 
       "idUserSession" : idUserSession,
       "idSession" : idSession
     });
-    debug(url);
+
     var method = CONFIG.endpoints.userSession.list.method;
     loadView(
       url, 
@@ -1238,9 +1271,17 @@ function updateUserSession(idSession, idUserSession)
         $('#idSession').val(data.idSession);
         $('#points').val(data.points);
         $('#isApproved').val(data.isApproved);
-        $('#cashout').val(data.cashout);
-        $('#isApproved').val(data.isApproved);
+        
+        // if isset startTime, show 
         $('#start').val(data.startTime.date.substr(0,10) + 'T' + data.startTime.date.substr(11,5));
+
+        if (data.endTime) {
+          $('#end').val(data.endTime.date.substr(0,10) + 'T' + data.endTime.date.substr(11,5));
+          $('#cashout').val(data.cashout); 
+        }
+
+        $('#usersession-form').addClass('active-player');
+        
       },
       function(err) {
         debug('Fetch Error :-S', err);
@@ -1249,8 +1290,12 @@ function updateUserSession(idSession, idUserSession)
 }
 
 
-function closeUserSession(idSession, idUserSession)
+function closeUserSession(button, idSession, idUserSession)
 {   
+    if ($(button).hasClass("button-disabled")) {
+      return;
+    }
+
     var url = parseRoute(CONFIG.endpoints.userSession.list.path, { 
       "idUserSession" : idUserSession
     });
@@ -1258,7 +1303,7 @@ function closeUserSession(idSession, idUserSession)
     loadView(
       url, 
       method, 
-      'templates/usersessionclose-form.twig',
+      'templates/usersession-form.twig',
       function(template, data) {
         debug(data);
         var now = getCurrentDate();
@@ -1282,6 +1327,10 @@ function closeUserSession(idSession, idUserSession)
         $('#cashout').val(data.cashout);
         $('#start').val(data.startTime.date.substr(0,10) + 'T' + data.startTime.date.substr(11,5));
         $('#end').val(now["date"] + "T" + now["hour"]);
+        $('#cashout').focus();
+        // $('#usersession-form').addClass('active-player');
+
+        
       },
       function(err) {
         debug('Fetch Error :-S', err);
@@ -1292,9 +1341,9 @@ function closeUserSession(idSession, idUserSession)
 
 function userSessionSubmit(idSession)
 {
-  var url    = $('#userssession-form').attr("action");
-  var method = $('#userssession-form').attr("method");
-  var form = new FormData(document.getElementById('userssession-form'));
+  var url    = $('#usersession-form').attr("action");
+  var method = $('#usersession-form').attr("method");
+  var form = new FormData(document.getElementById('usersession-form'));
 
   makeAPIRequest(
     url,

@@ -1,3 +1,7 @@
+<div class="card-header bg-primary text-white">
+    Listado de Usuarios Activos
+</div>
+
 <div class="card-body">
     <section class="container row" style="width: auto; margin: auto auto;">
         <article class="col-md-12">
@@ -5,8 +9,9 @@
                 <thead class="text-center bg-dark text-white">
                     <th> Jugador </th>
                     <th> Hora <br>de inicio </th>
-                    <th> Cashin </th>
-                    <th> Cashout </th>
+                    <th> Efectivo </th>
+                    <th> Credito </th>
+                    <th> Total </th>
                     <th> Acciones </th>
                 </thead>
                 <tbody class="text-center">
@@ -18,11 +23,12 @@
                         </td>
                         <td> {{ user.startTime.date|date('H:i') }}
                         </td>
-                        <td> {{ user.cashin|number_format(2, ',', '.') }} ({{ user.totalCredit|number_format(2, ',', '.') }}) </td>
-                        <td> {{ user.cashout|default("-") }} </td>
-                        <td> <a href="#" onclick="closeUserSession({{ user.idSession }}, {{ user.id }});"> 
+                        <td> {{ user.TotalCash|number_format(2, ',', '.') }} </td>
+                        <td> {{ user.TotalCredit|number_format(2, ',', '.') }} </td>
+                        <td> {{ user.cashin|number_format(2, ',', '.') }} </td>
+                        <td> <a class="{% if user.cashin == 0 %} button-disabled {% endif %}" href="#" onclick="closeUserSession(this, {{ user.idSession }}, {{ user.id }}); return false;"> 
                              <i class="fas fa-sign-out-alt"></i> </a> 
-                             <a href="#" onclick="updateUserSession({{ user.idSession }}, {{ user.id }});"> <i class="fas fa-pencil-alt"> </i> </a> 
+                             <a class="{% if user.cashin == 0 %} button-disabled {% endif %}" href="#" onclick="updateUserSession(this, {{ user.idSession }}, {{ user.id }}); return false;"> <i class="fas fa-pencil-alt"> </i> </a> 
                              <a href="#" onclick="deleteUserSession({{ user.idSession }}, {{ user.id }});"> <i class="fas fa-trash-alt"></i> </a> 
                              </td>
                     </tr>
@@ -41,7 +47,7 @@
 
 <div class="card">
     <div class="card-header bg-primary text-white">
-        Usuarios Inactivos
+        Listado de Usuarios Inactivos
     </div>
     <div class="card-body">
         <section class="container row" style="width: auto; margin: auto auto;">
@@ -64,12 +70,12 @@
                                 {{ user.user.name }} {{ user.user.lastname }}
                             </td>
                             <td> {{ user.startTime.date|date('H:i') }} </td>
-                            <td> {{ user.cashin|number_format(2, ',', '.') }} ({{ user.totalCredit|number_format(2, ',', '.') }}) </td>
+                            <td> {{ user.cashin|number_format(2, ',', '.') }} </td>
                             <td> {{ user.cashout|number_format(2, ',', '.') }} </td>
                             <td> {{ user.endTime.date|date('H:i') }}
                             </td>
                             <td>  
-                                 <a href="#" onclick="updateUserSession({{ user.idSession }}, {{ user.id }});"> <i class="fas fa-pencil-alt"> </i> </a> 
+                                 <a href="#" onclick="updateUserSession(this, {{ user.idSession }}, {{ user.id }});"> <i class="fas fa-pencil-alt"> </i> </a> 
                                  <a href="#" onclick="deleteUserSession({{ user.idSession }}, {{ user.id }});"> <i class="fas fa-trash-alt"></i> </a> 
                             </td>
                         </tr>

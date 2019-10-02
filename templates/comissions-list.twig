@@ -1,9 +1,14 @@
+<div class="card-header bg-primary text-white">
+    Listado de Comisiones
+</div>
+
 <div class="card-body">
     <section class="container row">
         <article class="col-md-9" style="width: auto; margin: auto auto;">
             <table class="table table-bordered table-hover table-condensed">
                 <thead class="thead-dark text-center bg-secondary">
                     <tr class="bg-success">
+                        <th> # </th>
                         <th> Hora </th>
                         <th> Comision (usd) </th>
                         <th> Accciones </th>
@@ -16,9 +21,14 @@
                     </tr>
                     {% endif %}
                     {% set totalComission = 0 %}
+                    {% set counter = (counter|default(0)) %}
 
                     {% for comission in comissions %}
                     <tr>
+                        <th> 
+                            {% set counter = (counter|default(counter)) + 1 %}
+                            <p>{{ counter }}</p>
+                        </th>
                         <td> {{ comission.hour.date|date('H:i') }} </td>
                         <td> {{ comission.comission|number_format(2, ',', '.') }} </td>
                         <td> <a href="#" onclick="updateComission({{ comission.idSession }}, {{ comission.id }});"> <i class="fas fa-pencil-alt"> </i> </a> 
@@ -28,6 +38,7 @@
                     {% set totalComission = totalComission + comission.comission %}
                     {% endfor %}
                     <tr class="text-center bg-dark text-white">
+                        <th> </th>
                         <th> TOTAL </th>
                         <th> {{ totalComission|number_format(2, ',', '.') }} </th>
                         <th> </th>
