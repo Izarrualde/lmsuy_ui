@@ -1,0 +1,37 @@
+<div class="card-header bg-primary text-white">
+    Buyin Ticket
+</div>
+
+<div class="card-body">
+    <section class="container row">
+        <article class="col-md-11" style="width: auto; margin: auto auto;">
+            <table onclick="closeTicket(); return false;" class="table table-bordered table-hover table-condensed onlyRead">
+                {# <thead class="text-center bg-dark text-white">
+                    <tr>
+                        <th> Nombre </th>
+                        <td>  {{ name }} </td>
+                    </tr>
+                </thead> #}
+                <tbody class="text-center">
+                    <tr>
+                        <th> Nombre </th>
+                        <td>  {{ name }} </td>
+                    </tr>
+                    <tr>
+                        <th> Apellido </th>
+                        <td>  {{ lastname }} </td>
+                    </tr>
+                    <tr>
+                        <th> Monto credito </th>
+                        <td>  {{ amountCredit|number_format(0, ',', '.') }} </td>
+                    </tr>
+                    <tr>
+                        <th> Hora </th>
+                        <td>  {{ hour }} </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </article>
+    </section>
+</div>

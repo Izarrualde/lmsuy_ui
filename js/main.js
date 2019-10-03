@@ -428,8 +428,6 @@ function deleteUser(idUser)
 
 function fetchBuyins(idSession, countSeatedPlayers)
 {   
-    debug("seated players");
-    debug(countSeatedPlayers);
     $('#forms').html('');
     var url = parseRoute(CONFIG.endpoints.buyins.listAll.path, { 
       "idSession" : idSession
@@ -873,6 +871,10 @@ function buyinSubmit(idSession)
         $('#forms').html('');
         // ACTUALIZAR LA TABLA
         fetchBuyins(idSession);
+
+        // print ticket
+        printTicket(data);
+
         debug(data);
       });
     },
@@ -881,6 +883,44 @@ function buyinSubmit(idSession)
     },
     form
   );
+}
+
+function printTicket(data)
+{
+  debug("en print data");
+  debug(data);
+  var template = twig({
+      href: 'templates/buyin-ticket.twig',
+      async: false,
+      // The default is to load asynchronously, and call the load function 
+      //   when the template is loaded.
+      load: function(template) {
+        var output = template.render({
+          name: data.user_session.user.name,
+          lastname: data.user_session.user.lastname,
+          amountCredit: data.amountCredit,
+          hour: data.hour.date
+        });
+
+        $('#ticket').html(output);
+      }
+  });
+
+  $('#ticket').removeClass('hide').addClass('show');
+  // hidden list of buyins
+  $('#main').removeClass('show').addClass('hide');
+  $('#breadcrumbs').addClass('hide');
+  $('#menu').addClass('hide');
+}
+
+function closeTicket()
+{
+  // hidden list of buyins
+  $('#ticket').removeClass('show').addClass('hide');
+
+  $('#main').removeClass('hide').addClass('show');
+  $('#breadcrumbs').removeClass('hide');
+  $('#menu').removeClass('hide');
 }
 
 /*
@@ -1635,7 +1675,3 @@ function chargeAmount(id, amount)
   $('#'+id).val(amount);
 }
 
-function hasActivePlayers(idSession)
-{
-
-}
