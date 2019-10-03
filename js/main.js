@@ -285,6 +285,7 @@ function fetchSessions()
         var output = template.render({
           sessions : data
         });
+        debug(data);
         $('#main').html(output);
       },
       function(err) {
@@ -425,8 +426,10 @@ function deleteUser(idUser)
       );
 }
 
-function fetchBuyins(idSession)
+function fetchBuyins(idSession, countSeatedPlayers)
 {   
+    debug("seated players");
+    debug(countSeatedPlayers);
     $('#forms').html('');
     var url = parseRoute(CONFIG.endpoints.buyins.listAll.path, { 
       "idSession" : idSession
@@ -440,7 +443,8 @@ function fetchBuyins(idSession)
       function(template, data) {
         var output = template.render({
           buyins : data,
-          idSession: idSession
+          idSession: idSession,
+          countSeatedPlayers: countSeatedPlayers
         });
         $('#main').html(output);
       },
@@ -891,9 +895,11 @@ function suggestedDate(sessionDate)
   }
 }
 */
-function addBuyin(idSession)
+function addBuyin(button, idSession)
 {   
-
+  if ($(button).hasClass("button-disabled")) {
+    return;
+  }
   // cargo el template de form
   var template = twig({
       href: 'templates/buyin-formAdd.twig',
@@ -1622,4 +1628,14 @@ function addSession()
         $('#start_at').val(now["date"] + "T" + now["hour"]);
       }
   });
+}
+
+function chargeAmount(id, amount)
+{
+  $('#'+id).val(amount);
+}
+
+function hasActivePlayers(idSession)
+{
+
 }

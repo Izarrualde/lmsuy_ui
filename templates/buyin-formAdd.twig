@@ -17,15 +17,38 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="sr-only" for="amountCash"> monto cash: </label>
-                                <input class="form-control" name="amountCash" id="amountCash" type="number" placeholder="monto cash" required="true">
+                                <label for="amountCash"> monto cash: </label>
+                                <input class="form-control" name="amountCash" id="amountCash" type="number" placeholder="monto cash" required="true" step="50">
+                            </div>
+
+                            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                                <div class="btn-group mr-2" role="group" aria-label="First group">
+                                    <button type="button" class="btn btn-secondary" onclick="chargeAmount('amountCash', 100); return false;">100</button>
+                                    <button type="button" class="btn btn-secondary" onclick="chargeAmount('amountCash', 200); return false;">200</button>
+                                    <button type="button" class="btn btn-secondary" onclick="chargeAmount('amountCash', 300); return false;">300</button>
+                                    <button type="button" class="btn btn-secondary" onclick="chargeAmount('amountCash', 400); return false;">400</button>
+                                    <button type="button" class="btn btn-secondary" onclick="chargeAmount('amountCash', 500); return false;">500</button>
+                                    <button type="button" class="btn btn-secondary" onclick="chargeAmount('amountCash', 1000); return false;">1000</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="amountCredit"> monto credito: </label>
+                                <input class="form-control" name="amountCredit" id="amountCredit" type="number" placeholder="monto credito" required="true" step="50">
+                            </div>
+
+                            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                                <div class="btn-group mr-2" role="group" aria-label="First group">
+                                    <button type="button" class="btn btn-secondary" onclick="chargeAmount('amountCredit', 100); return false;">100</button>
+                                    <button type="button" class="btn btn-secondary" onclick="chargeAmount('amountCredit', 200); return false;">200</button>
+                                    <button type="button" class="btn btn-secondary" onclick="chargeAmount('amountCredit', 300); return false;">300</button>
+                                    <button type="button" class="btn btn-secondary" onclick="chargeAmount('amountCredit', 400); return false;">400</button>
+                                    <button type="button" class="btn btn-secondary" onclick="chargeAmount('amountCredit', 500); return false;">500</button>
+                                    <button type="button" class="btn btn-secondary" onclick="chargeAmount('amountCredit', 1000); return false;">1000</button>
+                                </div>
                             </div>
                             <div class="form-group">
-                                <label class="sr-only" for="amountCredit"> monto credito: </label>
-                                <input class="form-control" name="amountCredit" id="amountCredit" type="number" placeholder="monto credito" required="true">
-                            </div>
-                            <div class="form-group">
-                                <label class="sr-only" for="hour"> hora: </label>
+                                <label for="hour"> hora: </label>
                                 <input class="form-control" name="hour" id="hour" type="datetime-local" required="true">
                                 <small id="hour" class="form-tet text-muted"> Fecha y hora </small>
                             </div>
