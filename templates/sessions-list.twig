@@ -31,7 +31,7 @@
                         <td>
                             <a href="#" onclick="fetchUsersSession({{ session.id }});" class="btn btn-sm btn-info"> <i class="fas fa-users"></i></a>
 
-                            <a href="#" onclick="fetchBuyins({{ session.id }}, {{ session.countSeatedPlayers }});" class="btn btn-sm btn-secondary"> <i class="fas fa-money-bill"></i></a>
+                            <a href="#" onclick="fetchBuyins({{ session.id }}, {{ session.countSeatedPlayers }}, '{{ session.startTimeReal.date }}');" class="btn btn-sm btn-secondary"> <i class="fas fa-money-bill"></i></a>
                             <a href="#" onclick="fetchTips({{ session.id }});" class="btn btn-sm btn-danger"> <i class="fas fa-hand-holding-usd"></i></a>
 
                             <a href="#" onclick="fetchComissions({{ session.id }}, {{ session.comissionTotal }});" class="btn btn-sm btn-success"> <i class="fas fa-dollar-sign"></i></a>

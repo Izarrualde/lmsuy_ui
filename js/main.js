@@ -122,11 +122,11 @@ var CONFIG = {
       },
       update : {
         method : 'post',
-        path : 'session/:idSession/expenses/:idExpenditure/update'
+        path : '/sessions/:idSession/expenses/:idExpenditure/update'
       },
       delete : {
         method : 'get',
-        path : '/session/:idSession/expenses/:idExpenditure/remove'
+        path : '/sessions/:idSession/expenses/:idExpenditure/remove'
       } 
     },
     userSession : {
@@ -407,8 +407,7 @@ function deleteUser(idUser)
     });
     var method = CONFIG.endpoints.users.delete.method;
 
-    // var url = 'http://www.lmsuy.local/users/' + idUser + '/remove';
-    // var method = 'get';
+    debug("url users remove"); debug(url);
     makeAPIRequest(
       url,
       method,
@@ -426,7 +425,7 @@ function deleteUser(idUser)
       );
 }
 
-function fetchBuyins(idSession, countSeatedPlayers)
+function fetchBuyins(idSession, countSeatedPlayers, sessionDate)
 {   
     $('#forms').html('');
     var url = parseRoute(CONFIG.endpoints.buyins.listAll.path, { 
@@ -442,6 +441,7 @@ function fetchBuyins(idSession, countSeatedPlayers)
         var output = template.render({
           buyins : data,
           idSession: idSession,
+          sessionDate: sessionDate,
           countSeatedPlayers: countSeatedPlayers
         });
         $('#main').html(output);
@@ -632,7 +632,6 @@ function deleteExpenditure(idSession, idExpenditure)
         }
 
         fetchExpenses(idSession);
-        debug(data);
       },
         function(err) {
           console.log(err)
@@ -923,19 +922,26 @@ function closeTicket()
   $('#menu').removeClass('hide');
 }
 
-/*
 function suggestedDate(sessionDate) 
 {
-  var now = getCurrentDate();
+  "2019-09-24 18:01:00.000000"
 
-  if sessionDate - now["date"] > 24 hs {
-    return sessionDate;
-  } else {
-    return now["date"] + "T" + now["hour"];
-  }
+  var now = getCurrentDate();
+  var now_date = moment(now.date);
+  var session_date = moment(sessionDate);
+
+  if (now_date.diff(session_date, 'days') > 2) {
+    debug(sessionDate.substring(0,10) + "T" + sessionDate.substring(11,16));
+    return sessionDate.substring(0,10) + "T" + sessionDate.substring(11,16);
+  } 
+
+  return now["date"] + "T" + now["hour"];
 }
-*/
-function addBuyin(button, idSession)
+
+
+
+
+function addBuyin(button, idSession, sessionDate)
 {   
   if ($(button).hasClass("button-disabled")) {
     return;
@@ -954,6 +960,7 @@ function addBuyin(button, idSession)
         var method = CONFIG.endpoints.buyins.create.method;
         var output = tpl.render({
           idSession : idSession,
+          sessionDate: sessionDate,
           session : null,
           title: 'Agregar Buyin',
           action : url,
@@ -962,7 +969,9 @@ function addBuyin(button, idSession)
         $('#forms').html(output);
         $('#idSession').val(idSession);
         // $('#hour').val(now["date"] + "T" + now["hour"]);
-        // $('#hour').val(suggestedDate(session.date)); // fetchSession 
+        $('#hour').val(suggestedDate(sessionDate)); // fetchSession 
+
+
         $('#approved').val(1);
         $('#currency').val(1);
         $('#amountCash').focus();

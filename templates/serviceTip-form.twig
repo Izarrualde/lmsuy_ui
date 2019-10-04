@@ -13,13 +13,13 @@
                             <input id="id" name="id" type="hidden">
                             <input name="idSession" type="hidden" id="idSession" type="text" required="true">
                             <div class="form-group">
-                                <label class="sr-only" for="hour"> hora: </label>
+                                <label for="hour"> hora: </label>
                                 <input class="form-control" name="hour" id="hour" type="datetime-local" required="true">
                                 <small id="hour" class="form-text text-muted"> Fecha y hora </small>
                             </div>
                             <div class="form-group">
-                                <label class="sr-only" for="servicetip"> serviceTip: </label>
-                                <input class="form-control" name="serviceTip" id="serviceTip" type="text" placeholder="serviceTip" required="true">
+                                <label for="servicetip"> serviceTip: </label>
+                                <input class="form-control" name="serviceTip" id="serviceTip" placeholder="serviceTip" required="true" type="number">
                             </div>
                             <div class="form-group">
                                 <input class="btn btn-lg btn-block btn-primary" type="submit" value="{{ buttonName }}" />
