@@ -21,7 +21,9 @@
                         <td>
                             {{ user.user.name }} {{ user.user.lastname }}
                         </td>
-                        <td> {{ user.startTime.date|date('H:i') }}
+                        <td> {% if not user.startTime is null %} 
+                                {{ user.startTime.date|date('H:i') }}
+                             {% endif %}
                         </td>
                         <td> {{ user.TotalCash|number_format(2, ',', '.') }} </td>
                         <td> {{ user.TotalCredit|number_format(2, ',', '.') }} </td>
