@@ -29,6 +29,12 @@ var CONFIG = {
         path : '/sessions/:idSession/calculate'
       }
     },
+    rakeback_Algorithms: {
+      list : {
+        method : 'get',
+        path : '/rakeback-Algorithms'
+      }
+    },
     users: {
       list : {
         method : 'get',
@@ -898,7 +904,7 @@ function printTicket(data)
           name: data.user_session.user.name,
           lastname: data.user_session.user.lastname,
           amountCredit: data.amountCredit,
-          hour: data.hour.date
+          hour: data.hour.date.substr(11, 5)
         });
 
         $('#ticket').html(output);
@@ -1329,10 +1335,11 @@ function updateUserSession(button, idSession, idUserSession)
         
         // if isset startTime, show 
         $('#start').val(data.startTime.date.substr(0,10) + 'T' + data.startTime.date.substr(11,5));
+        $('#minimum_hours').val(data.minimumHours);
+        $('#cashout').val(data.cashout); 
 
         if (data.endTime) {
           $('#end').val(data.endTime.date.substr(0,10) + 'T' + data.endTime.date.substr(11,5));
-          $('#cashout').val(data.cashout); 
         }
 
         $('#usersession-form').addClass('active-player');
@@ -1519,7 +1526,6 @@ function updateUser(idUser)
         $('#cashin').val(data.cashin);
         $('#hours').val(data.hours);
         $('#active').val(data.isActive);
-
       },
       function(err) {
         debug('Fetch Error :-S', err);
@@ -1675,6 +1681,44 @@ function addSession()
         $('#forms').html(output);
         $('#date').val(now["date"]);
         $('#start_at').val(now["date"] + "T" + now["hour"]);
+        $('#minimum_user_session_hours').val(4);
+
+
+        var url = parseRoute(CONFIG.endpoints.rakeback_Algorithms.list.path, {});
+        var method = CONFIG.endpoints.rakeback_Algorithms.list.method;
+
+        var loadUsers = function() {
+          makeAPIRequest(
+          url,
+          method,
+          function(response) {
+            if (response.status !== 200) {
+                // si falla fetch usuarios hay que reintentarlo con un max retries
+                //loadUsers();
+                return;
+            }
+
+            // Examine the text in the response
+            response.json().then(function(data) {
+              debug("rakeback-Algorithms");
+              debug(data);
+
+              data.forEach(function(item) {
+                debug(item);
+                $('#rakebackClass').append('<option value="'+item+'">'+item+'</option>');
+              });
+            });
+          },
+          function(err) {
+            console.log(err)
+          },
+        );
+      };
+      loadUsers();
+
+
+
+
       }
   });
 }
@@ -1683,4 +1727,3 @@ function chargeAmount(id, amount)
 {
   $('#'+id).val(amount);
 }
-

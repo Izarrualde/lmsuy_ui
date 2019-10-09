@@ -27,7 +27,7 @@
                         </th>
                         <td> {{ user.name }} {{ user.lastname }} </td>
                         <td> {{ user.username }} </td>
-                        <td> {{ user.hours|number_format }} </td>
+                        <td> {{ user.hours|number_format(2, ',', '.') }} </td>
                         <td> <a href="#" onclick="updateUser({{ user.id }});"> <i class="fas fa-pencil-alt"> </i> </a>
                              <a class="{% if user.cashin != 0 %} button-disabled {% endif %}" href="#" onclick="deleteUser({{ user.id }});"> <i class="fas fa-trash-alt"></i> </a> 
                              </td>
