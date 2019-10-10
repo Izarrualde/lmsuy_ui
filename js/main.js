@@ -1335,7 +1335,7 @@ function updateUserSession(button, idSession, idUserSession)
         
         // if isset startTime, show 
         $('#start').val(data.startTime.date.substr(0,10) + 'T' + data.startTime.date.substr(11,5));
-        $('#minimum_hours').val(data.minimumHours);
+        $('#minimum_minutes').val(data.minimumMinutes);
         $('#cashout').val(data.cashout); 
 
         if (data.endTime) {
@@ -1390,6 +1390,7 @@ function closeUserSession(button, idSession, idUserSession)
         $('#start').val(data.startTime.date.substr(0,10) + 'T' + data.startTime.date.substr(11,5));
         $('#end').val(now["date"] + "T" + now["hour"]);
         $('#cashout').focus();
+        $('#minimum_minutes').val(data.minimumMinutes);
         // $('#usersession-form').addClass('active-player');
 
         
@@ -1681,7 +1682,7 @@ function addSession()
         $('#forms').html(output);
         $('#date').val(now["date"]);
         $('#start_at').val(now["date"] + "T" + now["hour"]);
-        $('#minimum_user_session_hours').val(4);
+        $('#minimum_user_session_minutes').val(240);
 
 
         var url = parseRoute(CONFIG.endpoints.rakeback_Algorithms.list.path, {});
