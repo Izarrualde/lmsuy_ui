@@ -1,7 +1,7 @@
 var DEBUG = true;
 
 var CONFIG = {
-  base_url : 'http://www.lmsuy.local',
+  base_url : 'http://api-dev.lmsuy.com',
   endpoints : {
     sessions : {
       list : {
@@ -275,7 +275,6 @@ function loadView(url, method, templatePath, renderer, errorHandler) {
 
 function fetchSessions()
 {
-    debug("en fetchSessions");
     $('.nav-link.active').removeClass('active');
     $('#menuitem-sessions').addClass('active');
     $('#forms').html('');
