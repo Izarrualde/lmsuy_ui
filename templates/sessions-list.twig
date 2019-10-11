@@ -7,7 +7,7 @@
         <article class="col-md-12 col-sm-12 col-xs-12">
             <table class="table table-bordered table-hover text-center">
                 <thead class="text-center bg-dark text-white">
-                    <th> Id </th>
+                    <th> # </th>
                     <th> Fecha </th>
                     <th> Dia </th>
                     <th> Descrip. </th>
@@ -18,9 +18,13 @@
                     <th> Acciones</th>
                 </thead>
                 <tbody>
+                    {% set counter = (counter|default(0)) %}
                     {% for session in sessions %}
                     <tr class="{{ session.endTime ? '' : 'active' }}">
-                        <td>{{ session.id }}</td>
+                        <th> 
+                            {% set counter = (counter|default(counter)) + 1 %}
+                            <p>{{ counter }}</p>
+                        </th>
                         <td>{{ session.created_at.date|date("d/m/Y") }}</td>
                         <td>{{ session.created_at.date|date('l') }}</td>
                         <td>{{ session.description|default("-") }}</td>

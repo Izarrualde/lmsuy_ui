@@ -23,8 +23,8 @@
                             {# <!--<textarea rows="4" cols="50" name="description" form="">
 							Descripcion...</textarea> --> #}
                             <div class="form-group">
-                                <label for="date">Fecha: </label>
-                                <input class="form-control" name="date" id="date" type="date" placeholder="date" required="true">
+                                <label for="date">Fecha de creación: </label>
+                                <input class="form-control" name="date" id="date" type="date" placeholder="Fecha de creación" required="true">
                                 <small id="end" class="form-tet text-muted"> Fecha </small>
                             </div>
                             <div class="form-group">
@@ -36,16 +36,22 @@
                                 <input class="form-control" name="start_at" id="start_at" type="datetime-local" placeholder="hora de inicio" required="true">
                                 <small id="end" class="form-tet text-muted"> Fecha y hora de inicio </small>
                             </div>
+
+                            {# only in session in play or finished
                             <div class="form-group">
                                 <label for="horaInicio"> hora inicio real: </label>
                                 <input class="form-control" name="real_start_at" id="real_start_at" type="datetime-local" placeholder="hora de inicio real">
                                 <small id="end" class="form-tet text-muted"> Fecha y hora de inicio real </small>
                             </div>
+                            #}
+
+                            {# only in finished session 
                             <div class="form-group">
                                 <label for="end"> hora fin: </label>
                                 <input class="form-control" name="end_at" id="end_at" type="datetime-local" placeholder="hora de fin">
                                 <small id="end" class="form-tet text-muted"> Fecha y hora de finalización </small>
                             </div>
+                            #}
 
                             <div class="form-group">
                                 <label for="minimum_user_session_minutes"> Tiempo mínimo de juego: </label>
