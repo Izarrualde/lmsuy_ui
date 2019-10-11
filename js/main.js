@@ -1,7 +1,7 @@
 var DEBUG = true;
 
 var CONFIG = {
-  base_url : 'http://api-dev.lmsuy.com',
+  base_url : 'http://www.lmsuy.local',
   endpoints : {
     sessions : {
       list : {
@@ -482,9 +482,10 @@ function deleteBuyin(idSession, idBuyin)
       );
 }
 
-function fetchComissions(idSession, comissionTotal)
+function fetchComissions(idSession, comissionTotal, sessionDate)
 {   
     debug(comissionTotal);
+    debug("sessionDate"); debug(sessionDate);
     $('#forms').html('');
     var url = parseRoute(CONFIG.endpoints.comissions.listAll.path, { 
       "idSession" : idSession
@@ -498,7 +499,8 @@ function fetchComissions(idSession, comissionTotal)
       function(template, data) {
         var output = template.render({
           comissions : data,
-          idSession: idSession,
+          sessionDate: sessionDate
+,          idSession: idSession,
           comissionTotal : comissionTotal
         });
 
@@ -644,7 +646,7 @@ function deleteExpenditure(idSession, idExpenditure)
     );
 }
 
-function fetchTips(idSession)
+function fetchTips(idSession, sessionDate)
 {   
     $('#forms').html('');
     var url = parseRoute(CONFIG.endpoints.tips.listAll.path, {
@@ -660,6 +662,7 @@ function fetchTips(idSession)
           {
             dealerTips : data.dealerTips, 
             serviceTips : data.serviceTips,
+            sessionDate: sessionDate,
             idSession: idSession
           }
         );
@@ -722,6 +725,22 @@ function deleteServiceTip(idSession, idServiceTip)
 }
 
 ///////////////////////////////////////
+function suggestedDate(sessionDate) 
+{
+  debug("en suggestedDate");
+  debug("sessionDate = "); debug(sessionDate);
+  
+  var now          = getCurrentDate();
+  var now_date     = moment(now.date);
+  var session_date = moment(sessionDate);
+
+  // sessionDate queda vacia al no hacer fetch? porque me baso en la data, y esta cambia
+  if (now_date.diff(session_date, 'days') > 2) {
+    return sessionDate.substring(0,10) + "T" + sessionDate.substring(11,16);
+  } 
+
+  return now["date"] + "T" + now["hour"];
+}
 
 function updateComission(idSession, idComission)
 {   
@@ -790,6 +809,7 @@ function comissionSubmit(idSession)
 
 function addComission(idSession, sessionDate)
 {   
+  debug("sessionDate"); debug(sessionDate);
   // cargo el template de form
   var template = twig({
       href: 'templates/comission-form.twig',
@@ -812,6 +832,8 @@ function addComission(idSession, sessionDate)
         $('#forms').html(output);
         $('#idSession').val(idSession);
         $('#hour').val(suggestedDate(sessionDate));
+        debug("sessiondate"); debug(sessionDate);
+        debug("suggestedDate"); debug(suggestedDate(sessionDate));
         $('#comission').focus();
       }
   });
@@ -928,27 +950,10 @@ function closeTicket()
   $('#menu').removeClass('hide');
 }
 
-function suggestedDate(sessionDate) 
-{
-  "2019-09-24 18:01:00.000000"
-
-  var now = getCurrentDate();
-  var now_date = moment(now.date);
-  var session_date = moment(sessionDate);
-
-  if (now_date.diff(session_date, 'days') > 2) {
-    debug(sessionDate.substring(0,10) + "T" + sessionDate.substring(11,16));
-    return sessionDate.substring(0,10) + "T" + sessionDate.substring(11,16);
-  } 
-
-  return now["date"] + "T" + now["hour"];
-}
-
-
-
 
 function addBuyin(button, idSession, sessionDate)
 {   
+  debug(sessionDate);
   if ($(button).hasClass("button-disabled")) {
     return;
   }
