@@ -788,7 +788,7 @@ function comissionSubmit(idSession)
   );
 }
 
-function addComission(idSession)
+function addComission(idSession, sessionDate)
 {   
   // cargo el template de form
   var template = twig({
@@ -803,6 +803,7 @@ function addComission(idSession)
         });
         var output = tpl.render({
           idSession : idSession,
+          sessionDate: sessionDate,
           session : null,
           title: 'Agregar comisión',
           action : url,
@@ -810,7 +811,7 @@ function addComission(idSession)
         });
         $('#forms').html(output);
         $('#idSession').val(idSession);
-        $('#hour').val(now["date"] + "T" + now["hour"]);
+        $('#hour').val(suggestedDate(sessionDate));
         $('#comission').focus();
       }
   });
@@ -974,9 +975,7 @@ function addBuyin(button, idSession, sessionDate)
         $('#forms').html(output);
         $('#idSession').val(idSession);
         // $('#hour').val(now["date"] + "T" + now["hour"]);
-        $('#hour').val(suggestedDate(sessionDate)); // fetchSession 
-
-
+        $('#hour').val(suggestedDate(sessionDate));
         $('#approved').val(1);
         $('#currency').val(1);
         $('#amountCash').focus();
@@ -1175,7 +1174,7 @@ function dealerTipSubmit(idSession)
   );
 }
 
-function addTips(idSession)
+function addTips(idSession, sessionDate)
 {   
   // cargo el template de form
   var template = twig({
@@ -1190,6 +1189,7 @@ function addTips(idSession)
         });
         var output = tpl.render({
           idSession : idSession,
+          sessionDate: sessionDate,
           session : null,
           title: 'Agregar Tips',
           action : url,
@@ -1197,7 +1197,7 @@ function addTips(idSession)
         });
         $('#forms').html(output);
         $('#idSession').val(idSession);
-        $('#hour').val(now["date"] + "T" + now["hour"]);
+        $('#hour').val(suggestedDate(sessionDate));
       }
   });
 }
