@@ -1814,10 +1814,6 @@ function addSession()
         );
       };
       loadAlgorithms();
-
-
-
-
       }
   });
 }
