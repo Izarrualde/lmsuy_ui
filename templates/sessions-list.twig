@@ -20,11 +20,17 @@
                 <tbody>
                     {% set counter = (counter|default(0)) %}
                     {% for session in sessions %}
-                    <tr class="{{ session.endTime ? '' : 'active' }}">
-                        <th> 
-                            {% set counter = (counter|default(counter)) + 1 %}
-                            <p>{{ counter }}</p>
-                        </th>
+                    {% set counter = (counter|default(counter)) + 1 %}
+                    <tr class="session-status">
+                        <td> 
+                            {% if not session.endTime is null %}
+                                <p class="finished"> {{ counter }} </p>
+                            {% elseif session.startTimeReal is null %}
+                                <a href="#" class="btn btn-sm btn-danger" onclick="playSession({{ session.id }}); return false"> <i class="fas fa-play"></i>
+                            {% else %}
+                                <a href="#" class="btn btn-sm btn-dark" onclick="stopSession({{ session.id }}); return false"> <i class="fas fa-stop"></i>
+                            {% endif %}
+                        </td>
                         <td>{{ session.created_at.date|date("d/m/Y") }}</td>
                         <td>{{ session.created_at.date|date('l') }}</td>
                         <td>{{ session.description|default("-") }}</td>

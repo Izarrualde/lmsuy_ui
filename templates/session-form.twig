@@ -37,21 +37,23 @@
                                 <small id="end" class="form-tet text-muted"> Fecha y hora de inicio </small>
                             </div>
 
-                            {# only in session in play or finished
+                            
+                            {% if not session.startTimeReal is null %}
                             <div class="form-group">
                                 <label for="horaInicio"> hora inicio real: </label>
                                 <input class="form-control" name="real_start_at" id="real_start_at" type="datetime-local" placeholder="hora de inicio real">
                                 <small id="end" class="form-tet text-muted"> Fecha y hora de inicio real </small>
                             </div>
-                            #}
+                            {% endif %}
+                            
 
-                            {# only in finished session 
+                            {% if not session.endTime is null %} 
                             <div class="form-group">
                                 <label for="end"> hora fin: </label>
                                 <input class="form-control" name="end_at" id="end_at" type="datetime-local" placeholder="hora de fin">
                                 <small id="end" class="form-tet text-muted"> Fecha y hora de finalización </small>
                             </div>
-                            #}
+                            {% endif %}
 
                             <div class="form-group">
                                 <label for="minimum_user_session_minutes"> Tiempo mínimo de juego: </label>
@@ -59,8 +61,8 @@
                             </div>
 
                             <div class="form-group">
-                              <label for="rakebackClass">Rakeback: Class</label>
-                              <select class="form-control" name="rakebackClass" id="rakebackClass">
+                              <label for="rakeback_class">Rakeback: Class</label>
+                              <select class="form-control" name="rakeback_class" id="rakeback_class">
                                 <option value="" disabled> --Seleccione Rakeback method--</option>
                               </select>
                             </div>

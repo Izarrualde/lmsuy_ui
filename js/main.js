@@ -27,6 +27,14 @@ var CONFIG = {
       calculate : {
         method : 'get',
         path : '/sessions/:idSession/calculate'
+      },
+      playSession : {
+        method : 'get',
+        path : '/sessions/:idSession/play'
+      },
+      stopSession : {
+        method : 'get',
+        path : '/sessions/:idSession/stop'
       }
     },
     rakeback_Algorithms: {
@@ -729,7 +737,7 @@ function suggestedDate(sessionDate)
 {
   debug("en suggestedDate");
   debug("sessionDate = "); debug(sessionDate);
-  
+
   var now          = getCurrentDate();
   var now_date     = moment(now.date);
   var session_date = moment(sessionDate);
@@ -1596,6 +1604,58 @@ function addUser()
   });
 }
 
+function playSession(idSession)
+{   
+    var url = parseRoute(CONFIG.endpoints.sessions.playSession.path, { 
+      "idSession" : idSession
+    });
+    debug(url);
+    var method = CONFIG.endpoints.sessions.playSession.method;
+    debug(method);
+
+    makeAPIRequest(
+      url,
+      method,
+      function(response) {
+        if (response.status !== 200) {
+            errorHandler(response);
+            return;
+        }
+
+        fetchSessions();
+      },
+        function(err) {
+          debug(err)
+        }
+      );
+}
+
+function stopSession(idSession)
+{   
+    var url = parseRoute(CONFIG.endpoints.sessions.stopSession.path, { 
+      "idSession" : idSession
+    });
+    debug(url);
+    var method = CONFIG.endpoints.sessions.stopSession.method;
+    debug(method);
+
+    makeAPIRequest(
+      url,
+      method,
+      function(response) {
+        if (response.status !== 200) {
+            errorHandler(response);
+            return;
+        }
+
+        fetchSessions();
+      },
+        function(err) {
+          debug(err)
+        }
+      );
+}
+
 function updateSession(idSession)
 {   
     var url = parseRoute(CONFIG.endpoints.sessions.list.path, { 
@@ -1608,7 +1668,7 @@ function updateSession(idSession)
       'templates/session-form.twig',
       function(template, data) {
         var output = template.render({
-          user : data,
+          session : data,
           title : 'Editar Sesión',
           action : parseRoute(CONFIG.endpoints.sessions.update.path, { 
                       "idSession" : idSession
@@ -1621,16 +1681,50 @@ function updateSession(idSession)
         $('#idSession').val(data.idSession);
         $('#description').val(data.description);
         $('#title').val(data.title);
-        $('#rakebackClass').val(data.rakebackClass);
         $('#date').val(data.created_at.date.substr(0,10));
         $('#start_at').val(data.startTime.date.substr(0,10) + 'T' + data.startTime.date.substr(11,5));
-        $('#real_start_at').val(data.startTimeReal.date.substr(0,10) + 'T' + data.startTimeReal.date.substr(11,5));
-        $('#end_at').val(data.endTime.date.substr(0,10) + 'T' + data.endTime.date.substr(11,5));
+        if (data.startTimeReal != null) {
+          $('#real_start_at').val(data.startTimeReal.date.substr(0,10) + 'T' + data.startTimeReal.date.substr(11,5));          
+        }   
+        if (data.endTime != null) {
+          $('#end_at').val(data.endTime.date.substr(0,10) + 'T' + data.endTime.date.substr(11,5));
+        }
+        $('#minimum_user_session_minutes').val(data.minimumUserSessionMinutes);
+
+        var url_rakeback    = parseRoute(CONFIG.endpoints.rakeback_Algorithms.list.path, {});
+        var method_rakeback = CONFIG.endpoints.rakeback_Algorithms.list.method;
+        var loadAlgorithms  = function() {
+          makeAPIRequest(
+          url_rakeback,
+          method_rakeback,
+          function(response) {
+            if (response.status !== 200) {
+                // si falla fetch usuarios hay que reintentarlo con un max retries
+                //loadUsers();
+                return;
+            }
+
+            // Examine the text in the response
+            response.json().then(function(data) {
+              debug("rakeback-Algorithms");
+              debug(data);
+
+              data.forEach(function(item) {
+                $('#rakebackClass').append('<option value="'+item+'">'+item+'</option>');
+              });
+            });
+          },
+          function(err) {
+            console.log(err)
+          },
+        );
+      };
+      loadAlgorithms();
       },
       function(err) {
         debug('Fetch Error :-S', err);
       }
-    );
+    ); 
 }
 
 function sessionSubmit()
@@ -1692,7 +1786,7 @@ function addSession()
         var url = parseRoute(CONFIG.endpoints.rakeback_Algorithms.list.path, {});
         var method = CONFIG.endpoints.rakeback_Algorithms.list.method;
 
-        var loadUsers = function() {
+        var loadAlgorithms = function() {
           makeAPIRequest(
           url,
           method,
@@ -1719,7 +1813,7 @@ function addSession()
           },
         );
       };
-      loadUsers();
+      loadAlgorithms();
 
 
 
@@ -1732,3 +1826,4 @@ function chargeAmount(id, amount)
 {
   $('#'+id).val(amount);
 }
+
