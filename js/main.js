@@ -1487,7 +1487,7 @@ function addUserSession(idSession)
               // hacer un for
               // agregar los options al select
               data.forEach(function(item) {
-                $('#user_id').append('<option value="'+item.id+'">'+item.name+' '+item.lastname+'</option>');
+                $('#users_id').append('<option value="'+item.id+'">'+item.name+' '+item.lastname+'</option>');
               });
             });
           },
