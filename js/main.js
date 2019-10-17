@@ -1706,7 +1706,6 @@ function updateSession(idSession)
 
             // Examine the text in the response
             response.json().then(function(data) {
-              debug("rakeback-Algorithms");
               debug(data);
 
               data.forEach(function(item) {
@@ -1823,3 +1822,20 @@ function chargeAmount(id, amount)
   $('#'+id).val(amount);
 }
 
+function rotationDate()
+{
+  $('.show-column .day').toggleClass('hide-me');
+  $('.show-column .date').toggleClass('hide-me');  
+}
+
+function rotationTitle()
+{
+  $('.show-column .title').toggleClass('hide-me');
+  $('.show-column .descrip').toggleClass('hide-me');  
+}
+
+function rotationSeats()
+{
+  $('.show-column .seats').toggleClass('hide-me');
+  $('.show-column .seats-history').toggleClass('hide-me');  
+}

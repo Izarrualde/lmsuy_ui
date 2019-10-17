@@ -63,3 +63,12 @@ form.active-player .inactive-data {
 .onlyRead {
   cursor: not-allowed;
 }
+
+.show-column .hide-me {
+  display: none;
+}
+
+.to-corner {
+  position: absolute,
+  right: 0;
+}
