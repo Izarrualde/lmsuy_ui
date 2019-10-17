@@ -5,42 +5,51 @@
 <div class="card-body">
     <section class="container row" style="width: auto; margin: auto auto;">
         <article class="col-md-12 col-sm-12 col-xs-12">
-            <table class="table table-bordered table-hover text-center">
+            <table class="table table-bordered table-hover text-center show-column">
                 <thead class="text-center bg-dark text-white">
-                    <th> Id </th>
-                    <th> Fecha </th>
-                    <th> Dia </th>
-                    <th> Descrip. </th>
+                    <th> # </th>
+                    <th onclick="rotationDate();"> <span class="date"> Fecha </span>
+                    <span class="day hide-me"> Dia </span> </th>
+                    <th onclick="rotationTitle();"> <span class="title"> Title </span> <span class="descrip hide-me"> Descrip. </span>  </th>
+                    <th onclick="rotationSeats();"> <span class="seasts"> Asientos </span> <span class="seats-history hide-me"> Jugando/Total </span> </th>
                     <th> inicio </th>
-                    <th> Jugando/Total </th>
-                    <th> Asientos </th>
                     <th> fin </th>
                     <th> Acciones</th>
                 </thead>
                 <tbody>
+                    {% set counter = (counter|default(0)) %}
                     {% for session in sessions %}
-                    <tr class="{{ session.endTime ? '' : 'active' }}">
-                        <td>{{ session.id }}</td>
-                        <td>{{ session.created_at.date|date("d/m/Y") }}</td>
-                        <td>{{ session.created_at.date|date('l') }}</td>
-                        <td>{{ session.description|default("-") }}</td>
+                    {% set counter = (counter|default(counter)) + 1 %}
+                    <tr class="session-status">
+                        <td> 
+                            {% if not session.endTime is null %}
+                                <p class="finished"> {{ counter }} </p>
+                            {% elseif session.startTimeReal is null %}
+                                <a href="#" class="btn btn-sm btn-danger" onclick="playSession({{ session.id }}); return false"> <i class="fas fa-play"></i>
+                            {% else %}
+                                <a href="#" class="btn btn-sm btn-dark" onclick="stopSession({{ session.id }}); return false"> <i class="fas fa-stop"></i>
+                            {% endif %}
+                        </td>
+                        <td><span class="date"> {{ session.created_at.date|date("d/m/Y") }} </span>
+                        <span class="day hide-me"> {{ session.created_at.date|date('l') }} </span> </td>
+                        <td> <span class="title"> {{session.title}} </span> <span class="descrip hide-me"> {{ session.description|default("-") }}</span> </td>
+                        <td> <span class="seats"> {{ session.seats }} </span> <span class="seats-history hide-me"> {{ session.countActivePlayers }}/{{ session.distinctPlayers|length }} </span></td>
                         <td>{{ session.startTime ? session.startTime.date|date('H:i') : "-" }}</td>
-                        <td>{{ session.countActivePlayers }}/{{ session.distinctPlayers|length }}</td>
-                        <td>{{ session.seats }}</td>
-                        <td>{{ session.endTime ? session.endTime.date|date('H:i') : "-" }}</td>
+                        <td>{% if not session.endTime is null %} {{ session.endTime.date|date('H:i') }} {% endif %} 
                         <td>
                             <a href="#" onclick="fetchUsersSession({{ session.id }});" class="btn btn-sm btn-info"> <i class="fas fa-users"></i></a>
 
                             <a href="#" onclick="fetchBuyins({{ session.id }}, {{ session.countSeatedPlayers }}, '{{ session.startTimeReal.date }}');" class="btn btn-sm btn-secondary"> <i class="fas fa-money-bill"></i></a>
-                            <a href="#" onclick="fetchTips({{ session.id }});" class="btn btn-sm btn-danger"> <i class="fas fa-hand-holding-usd"></i></a>
 
-                            <a href="#" onclick="fetchComissions({{ session.id }}, {{ session.comissionTotal }});" class="btn btn-sm btn-success"> <i class="fas fa-dollar-sign"></i></a>
+                            <a href="#" onclick="fetchTips({{ session.id }}, '{{ session.startTimeReal.date }}');" class="btn btn-sm btn-danger"> <i class="fas fa-hand-holding-usd"></i></a>
+
+                            <a href="#" onclick="fetchComissions({{ session.id }}, {{ session.comissionTotal }}, '{{ session.startTimeReal.date }}');" class="btn btn-sm btn-success"> <i class="fas fa-dollar-sign"></i></a>
 
                             <a href="#" onclick="fetchExpenses({{ session.id }});" class="btn btn-sm btn-white"> <i class="fas fa-clipboard"></i></a>
                             
                             <a href="#" onclick="updateSession({{ session.id }});"> <i class="fas fa-pencil-alt"> </i> </a>
-                            
-                            <a href="#" onclick="deleteSession({{ session.id }});"> <i class="fas fa-trash-alt"></i> </a>
+
+                            <a href="#" class="to-corner" onclick="deleteSession({{ session.id }});"> <i class="fas fa-trash-alt"></i> </a>
                             
                             <a href="#" class="btn white" onclick="revisionSession({{ session.id }});" > <i class="far fa-eye"></i></a>
 

@@ -1,7 +1,7 @@
 var DEBUG = true;
 
 var CONFIG = {
-  base_url : 'http://api-dev.lmsuy.com',
+  base_url : 'http://www.lmsuy.local',
   endpoints : {
     sessions : {
       list : {
@@ -27,6 +27,14 @@ var CONFIG = {
       calculate : {
         method : 'get',
         path : '/sessions/:idSession/calculate'
+      },
+      playSession : {
+        method : 'get',
+        path : '/sessions/:idSession/play'
+      },
+      stopSession : {
+        method : 'get',
+        path : '/sessions/:idSession/stop'
       }
     },
     rakeback_Algorithms: {
@@ -482,9 +490,10 @@ function deleteBuyin(idSession, idBuyin)
       );
 }
 
-function fetchComissions(idSession, comissionTotal)
+function fetchComissions(idSession, comissionTotal, sessionDate)
 {   
     debug(comissionTotal);
+    debug("sessionDate"); debug(sessionDate);
     $('#forms').html('');
     var url = parseRoute(CONFIG.endpoints.comissions.listAll.path, { 
       "idSession" : idSession
@@ -498,7 +507,8 @@ function fetchComissions(idSession, comissionTotal)
       function(template, data) {
         var output = template.render({
           comissions : data,
-          idSession: idSession,
+          sessionDate: sessionDate
+,          idSession: idSession,
           comissionTotal : comissionTotal
         });
 
@@ -644,7 +654,7 @@ function deleteExpenditure(idSession, idExpenditure)
     );
 }
 
-function fetchTips(idSession)
+function fetchTips(idSession, sessionDate)
 {   
     $('#forms').html('');
     var url = parseRoute(CONFIG.endpoints.tips.listAll.path, {
@@ -660,6 +670,7 @@ function fetchTips(idSession)
           {
             dealerTips : data.dealerTips, 
             serviceTips : data.serviceTips,
+            sessionDate: sessionDate,
             idSession: idSession
           }
         );
@@ -722,6 +733,22 @@ function deleteServiceTip(idSession, idServiceTip)
 }
 
 ///////////////////////////////////////
+function suggestedDate(sessionDate) 
+{
+  debug("en suggestedDate");
+  debug("sessionDate = "); debug(sessionDate);
+
+  var now          = getCurrentDate();
+  var now_date     = moment(now.date);
+  var session_date = moment(sessionDate);
+
+  // sessionDate queda vacia al no hacer fetch? porque me baso en la data, y esta cambia
+  if (now_date.diff(session_date, 'days') > 2) {
+    return sessionDate.substring(0,10) + "T" + sessionDate.substring(11,16);
+  } 
+
+  return now["date"] + "T" + now["hour"];
+}
 
 function updateComission(idSession, idComission)
 {   
@@ -788,8 +815,9 @@ function comissionSubmit(idSession)
   );
 }
 
-function addComission(idSession)
+function addComission(idSession, sessionDate)
 {   
+  debug("sessionDate"); debug(sessionDate);
   // cargo el template de form
   var template = twig({
       href: 'templates/comission-form.twig',
@@ -803,6 +831,7 @@ function addComission(idSession)
         });
         var output = tpl.render({
           idSession : idSession,
+          sessionDate: sessionDate,
           session : null,
           title: 'Agregar comisión',
           action : url,
@@ -810,7 +839,9 @@ function addComission(idSession)
         });
         $('#forms').html(output);
         $('#idSession').val(idSession);
-        $('#hour').val(now["date"] + "T" + now["hour"]);
+        $('#hour').val(suggestedDate(sessionDate));
+        debug("sessiondate"); debug(sessionDate);
+        debug("suggestedDate"); debug(suggestedDate(sessionDate));
         $('#comission').focus();
       }
   });
@@ -927,27 +958,10 @@ function closeTicket()
   $('#menu').removeClass('hide');
 }
 
-function suggestedDate(sessionDate) 
-{
-  "2019-09-24 18:01:00.000000"
-
-  var now = getCurrentDate();
-  var now_date = moment(now.date);
-  var session_date = moment(sessionDate);
-
-  if (now_date.diff(session_date, 'days') > 2) {
-    debug(sessionDate.substring(0,10) + "T" + sessionDate.substring(11,16));
-    return sessionDate.substring(0,10) + "T" + sessionDate.substring(11,16);
-  } 
-
-  return now["date"] + "T" + now["hour"];
-}
-
-
-
 
 function addBuyin(button, idSession, sessionDate)
 {   
+  debug(sessionDate);
   if ($(button).hasClass("button-disabled")) {
     return;
   }
@@ -974,9 +988,7 @@ function addBuyin(button, idSession, sessionDate)
         $('#forms').html(output);
         $('#idSession').val(idSession);
         // $('#hour').val(now["date"] + "T" + now["hour"]);
-        $('#hour').val(suggestedDate(sessionDate)); // fetchSession 
-
-
+        $('#hour').val(suggestedDate(sessionDate));
         $('#approved').val(1);
         $('#currency').val(1);
         $('#amountCash').focus();
@@ -1175,7 +1187,7 @@ function dealerTipSubmit(idSession)
   );
 }
 
-function addTips(idSession)
+function addTips(idSession, sessionDate)
 {   
   // cargo el template de form
   var template = twig({
@@ -1190,6 +1202,7 @@ function addTips(idSession)
         });
         var output = tpl.render({
           idSession : idSession,
+          sessionDate: sessionDate,
           session : null,
           title: 'Agregar Tips',
           action : url,
@@ -1197,7 +1210,7 @@ function addTips(idSession)
         });
         $('#forms').html(output);
         $('#idSession').val(idSession);
-        $('#hour').val(now["date"] + "T" + now["hour"]);
+        $('#hour').val(suggestedDate(sessionDate));
       }
   });
 }
@@ -1474,7 +1487,7 @@ function addUserSession(idSession)
               // hacer un for
               // agregar los options al select
               data.forEach(function(item) {
-                $('#user_id').append('<option value="'+item.id+'">'+item.name+' '+item.lastname+'</option>');
+                $('#users_id').append('<option value="'+item.id+'">'+item.name+' '+item.lastname+'</option>');
               });
             });
           },
@@ -1591,6 +1604,58 @@ function addUser()
   });
 }
 
+function playSession(idSession)
+{   
+    var url = parseRoute(CONFIG.endpoints.sessions.playSession.path, { 
+      "idSession" : idSession
+    });
+    debug(url);
+    var method = CONFIG.endpoints.sessions.playSession.method;
+    debug(method);
+
+    makeAPIRequest(
+      url,
+      method,
+      function(response) {
+        if (response.status !== 200) {
+            errorHandler(response);
+            return;
+        }
+
+        fetchSessions();
+      },
+        function(err) {
+          debug(err)
+        }
+      );
+}
+
+function stopSession(idSession)
+{   
+    var url = parseRoute(CONFIG.endpoints.sessions.stopSession.path, { 
+      "idSession" : idSession
+    });
+    debug(url);
+    var method = CONFIG.endpoints.sessions.stopSession.method;
+    debug(method);
+
+    makeAPIRequest(
+      url,
+      method,
+      function(response) {
+        if (response.status !== 200) {
+            errorHandler(response);
+            return;
+        }
+
+        fetchSessions();
+      },
+        function(err) {
+          debug(err)
+        }
+      );
+}
+
 function updateSession(idSession)
 {   
     var url = parseRoute(CONFIG.endpoints.sessions.list.path, { 
@@ -1603,7 +1668,7 @@ function updateSession(idSession)
       'templates/session-form.twig',
       function(template, data) {
         var output = template.render({
-          user : data,
+          session : data,
           title : 'Editar Sesión',
           action : parseRoute(CONFIG.endpoints.sessions.update.path, { 
                       "idSession" : idSession
@@ -1616,16 +1681,49 @@ function updateSession(idSession)
         $('#idSession').val(data.idSession);
         $('#description').val(data.description);
         $('#title').val(data.title);
-        $('#rakebackClass').val(data.rakebackClass);
         $('#date').val(data.created_at.date.substr(0,10));
         $('#start_at').val(data.startTime.date.substr(0,10) + 'T' + data.startTime.date.substr(11,5));
-        $('#real_start_at').val(data.startTimeReal.date.substr(0,10) + 'T' + data.startTimeReal.date.substr(11,5));
-        $('#end_at').val(data.endTime.date.substr(0,10) + 'T' + data.endTime.date.substr(11,5));
+        if (data.startTimeReal != null) {
+          $('#real_start_at').val(data.startTimeReal.date.substr(0,10) + 'T' + data.startTimeReal.date.substr(11,5));          
+        }   
+        if (data.endTime != null) {
+          $('#end_at').val(data.endTime.date.substr(0,10) + 'T' + data.endTime.date.substr(11,5));
+        }
+        $('#minimum_user_session_minutes').val(data.minimumUserSessionMinutes);
+
+        var url_rakeback    = parseRoute(CONFIG.endpoints.rakeback_Algorithms.list.path, {});
+        var method_rakeback = CONFIG.endpoints.rakeback_Algorithms.list.method;
+        var loadAlgorithms  = function() {
+          makeAPIRequest(
+          url_rakeback,
+          method_rakeback,
+          function(response) {
+            if (response.status !== 200) {
+                // si falla fetch usuarios hay que reintentarlo con un max retries
+                //loadUsers();
+                return;
+            }
+
+            // Examine the text in the response
+            response.json().then(function(data) {
+              debug(data);
+
+              data.forEach(function(item) {
+                $('#rakebackClass').append('<option value="'+item+'">'+item+'</option>');
+              });
+            });
+          },
+          function(err) {
+            console.log(err)
+          },
+        );
+      };
+      loadAlgorithms();
       },
       function(err) {
         debug('Fetch Error :-S', err);
       }
-    );
+    ); 
 }
 
 function sessionSubmit()
@@ -1687,7 +1785,7 @@ function addSession()
         var url = parseRoute(CONFIG.endpoints.rakeback_Algorithms.list.path, {});
         var method = CONFIG.endpoints.rakeback_Algorithms.list.method;
 
-        var loadUsers = function() {
+        var loadAlgorithms = function() {
           makeAPIRequest(
           url,
           method,
@@ -1714,11 +1812,7 @@ function addSession()
           },
         );
       };
-      loadUsers();
-
-
-
-
+      loadAlgorithms();
       }
   });
 }
@@ -1726,4 +1820,22 @@ function addSession()
 function chargeAmount(id, amount)
 {
   $('#'+id).val(amount);
+}
+
+function rotationDate()
+{
+  $('.show-column .day').toggleClass('hide-me');
+  $('.show-column .date').toggleClass('hide-me');  
+}
+
+function rotationTitle()
+{
+  $('.show-column .title').toggleClass('hide-me');
+  $('.show-column .descrip').toggleClass('hide-me');  
+}
+
+function rotationSeats()
+{
+  $('.show-column .seats').toggleClass('hide-me');
+  $('.show-column .seats-history').toggleClass('hide-me');  
 }
